@@ -22,27 +22,27 @@ main:
     mov rbp, rsp; for correct debugging
     mov rdx,1
     inicio:
+    
     mov rcx,textCadena
     sub rsp,32
     call printf
     add rsp,32
     
     mov rcx,cadena1
-    call InputText
-    inc rdx
-   
-    cmp rdx,6
-    jle inicio
-    ret
-    
-InputText:
-    ;parametro 1 rcx: donde guardar el input       
-    ;parametro 2 rdx: numero del array
-    
     sub rsp,32
     call gets
     add rsp,32
     
+    inc rdx
+   
+    cmp rdx,6
+    jle inicio
+    call analyze
     ret
+input:
+    ;rax numero de ciclo
+    ;rcx donde se deja la cadena
     
-analyze: 
+
+analyze:
+    ret
