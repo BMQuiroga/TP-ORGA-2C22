@@ -5,12 +5,7 @@ extern	printf
 
 section     .data
     textCadena      db  "Ingrese la cadena numero %lli",10,0
-    cadena1 times 20 db " "
-    cadena2 times 20 db " " 
-    cadena3 times 20 db " " 
-    cadena4 times 20 db " "
-    cadena5 times 20 db " " 
-    cadena6 times 20 db " " 
+    cadena  times 180 db " "
 
 section     .bss
     ;cadena1     resw 100
@@ -27,28 +22,23 @@ section     .bss
 section     .text
 main:
     mov rbp, rsp; for correct debugging
-    mov rdx,1
-    mov rcx,cadena1
+    mov rsi,0
+    inicio:   
+    mov rdx,rsi
+    imul rdx,60
+    
+    add rdx,cadena
+    mov rcx, rdx
+    
+    mov rdx,rsi
     call input
-    mov rdx,2
-    mov rcx,cadena2
-    call input
-    mov rdx,3
-    mov rcx,cadena3
-    call input
-    mov rdx,4
-    mov rcx,cadena4
-    call input
-    mov rdx,5
-    mov rcx,cadena5
-    call input
-    mov rdx,6
-    mov rcx,cadena6
-    call input    
+    inc rsi
+    cmp rsi,5
+    jle inicio
+      
     ret
  
 input:
-    start:
     ;rdx numero de ciclo
     ;rcx donde se deja la cadena
     mov rdi,rcx
@@ -81,10 +71,10 @@ elementoDelArrayNumeroX:;falta probar
     ;El primer elemento es 0
     cmp rcx,0
     jne siguienteElemento
-    mov ElementoAux1,rdx
+    mov [elementoAux1],rdx
     ret
     siguienteElemento:
-    sub rcx
+    dec rcx
     inc rdx
     inc rdx
     cmp rdx,0x32
@@ -102,7 +92,7 @@ TamanoDeArray:;sin probar
     mov r9,0;contador espacios seguidos
     TamanoStart:
     cmp r9,2
-    je endTamañoArray
+    ;je endTamañoArray no compila por x razon
     cmp rcx,0x32
     je EncontroEspacio
     NoEncontroEspacio:
@@ -116,8 +106,8 @@ TamanoDeArray:;sin probar
     jmp TamanoStart
  
     endTamanoArray:
-    sub r8
-    mov tamanoArray,r8
+    dec r8
+    mov [tamanoArray],r8
     
     
     
