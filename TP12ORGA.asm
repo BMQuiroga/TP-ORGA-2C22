@@ -5,15 +5,22 @@ extern	printf
 
 section     .data
     textCadena      db  "Ingrese la cadena numero %lli",10,0
-        
+    cadena1 times 20 db " "
+    cadena2 times 20 db " " 
+    cadena3 times 20 db " " 
+    cadena4 times 20 db " "
+    cadena5 times 20 db " " 
+    cadena6 times 20 db " " 
 
 section     .bss
-    cadena1     resw 100
-    cadena2     resw 100
-    cadena3     resw 100
-    cadena4     resw 100
-    cadena5     resw 100
-    cadena6     resw 100
+    ;cadena1     resw 100
+    
+    elementoAux1    resw 1
+    elementoAux2    resw 1
+    elementoAux3    resw 1
+    tamanoArray     resw 1
+    
+   
 
 
 
@@ -37,8 +44,8 @@ main:
     call input
     mov rdx,6
     mov rcx,cadena6
-    call input
-        ret
+    call input    
+    ret
  
 input:
     start:
@@ -59,50 +66,62 @@ input:
     call gets
     add rsp,32
     
-    mov rcx,rdi
-    call validador
-    cmp rax,1;Si validador devuelve 1, es valido
-    jne start
     ret
-validador:
-    mov r9,0;contador de elementos
-    mov r8,0;contador de bytes movidos
-    ;si me muevo mas de 60 bytes, deberia haber 20 elementos max
-    jmp startValidador
-    restart:
-    inc r8
-    inc r9
-    cmp r9,20
-    je endValidador
-    startValidador:
     
-    cmp rcx,32
-    je restart
-    inc rcx
-    inc r8
-    cmp rcx,32
-    je restart
-    inc rcx
-    inc r8
-    cmp rcx,32
-    je restart
-    
-    mov r9,100 ;r9 se convierte en la cantidad de bytes para llegar al final de la cadena reservada
-    sub r9,r8
-    
-    
-    endValidador:;Hay 3 elementos seguidos que no son espacio
-    dec r9
-    cmp rcx,0;si ese elemento (y todos los que le siguen) son espacio, se termino la cadena
-    jne errorValidador
-    inc rcx
-    cmp r9,0
-    jg endValidador
-    mov rax,1
-    ret
-    errorValidador:
-    mov rax, 0
-    ret
+
 
 analyze:
     ret
+    
+    
+elementoDelArrayNumeroX:;falta probar
+    ;rcx numero
+    ;rdx cadena
+    ;devuelve el elemento a ElementoAux1
+    ;El primer elemento es 0
+    cmp rcx,0
+    jne siguienteElemento
+    mov ElementoAux1,rdx
+    ret
+    siguienteElemento:
+    sub rcx
+    inc rdx
+    inc rdx
+    cmp rdx,0x32
+    jne elementoDelArrayNumeroX;si despues de 2 despl estoy en otro char no espacio, aca empieza la sig palabra
+    inc rdx
+    jmp elementoDelArrayNumeroX;si no, hace falta 1 despl mas
+    
+arrayIncluyeElemento:
+    ret
+    
+TamanoDeArray:;sin probar
+    ;rcx array
+    ;busca hasta encontrar 2 0x32 seguidos
+    mov r8,0;contador espacios encontrados
+    mov r9,0;contador espacios seguidos
+    TamanoStart:
+    cmp r9,2
+    je endTamañoArray
+    cmp rcx,0x32
+    je EncontroEspacio
+    NoEncontroEspacio:
+    mov r9,0
+    inc rcx
+    jmp TamanoStart
+    EncontroEspacio:
+    inc r9
+    inc r8
+    inc rcx
+    jmp TamanoStart
+ 
+    endTamanoArray:
+    sub r8
+    mov tamanoArray,r8
+    
+    
+    
+    
+    
+    
+    
