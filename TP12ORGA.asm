@@ -92,7 +92,7 @@ TamanoDeArray:;sin probar
     mov r9,0;contador espacios seguidos
     TamanoStart:
     cmp r9,2
-    ;je endTamañoArray no compila por x razon
+    je endTamanoArray
     cmp rcx,0x32
     je EncontroEspacio
     NoEncontroEspacio:
@@ -109,9 +109,25 @@ TamanoDeArray:;sin probar
     dec r8
     mov [tamanoArray],r8
     
-    
-    
-    
+ElementosSonIguales:;sin probar
+    ;rcx y rdx direccs de memoria
+    mov r15,[rcx]
+    cmp r15,[rdx]
+    je PrimerElementoIgual
+    jmp NoSonIguales
+    PrimerElementoIgual:
+    inc rcx
+    inc rdx
+    mov r15,[rcx]
+    cmp r15,[rdx]
+    je SegundoElementoIgual
+    jmp NoSonIguales
+    SegundoElementoIgual:
+    mov rax,1
+    ret
+    NoSonIguales:
+    mov rax,0
+    ret
     
     
     
