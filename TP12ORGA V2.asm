@@ -45,9 +45,11 @@ main:
     cmp rsi,5
     jle inicio
     
-    call debug
+    ;call debug
     
-    ;call input2
+    call input2
+    
+    call Analizar
 
 
     ret
@@ -98,7 +100,7 @@ elementoXDelArrayA:;devuelve el elemento
     mov [elementoAux1],ax
     ret
     
-TamanoDeArray:;sin probar
+TamanoDeArray:;fu
     ;rdx numero del array
     ;r10 contador de elementos
     ;r8 puntero
@@ -110,18 +112,14 @@ TamanoDeArray:;sin probar
     add r8,cadena
     
     
-    
     startTamanoDeArray:
-    
-    
-        
+
     ;cmp [r8],ax;NUNCA ES =
     ;mov bx,[r8]
     ;cmp bx,ax
     
-    
-    mov rsi,placeholder
     mov rcx,1
+    mov rsi,placeholder
     mov rdi,r8
     repe cmpsb
     
@@ -138,28 +136,10 @@ TamanoDeArray:;sin probar
     mov rax,r10
     ret
 
-
-ElementosSonIguales2:;sin probar
-    ;rcx y rdx direccs de memoria
-    mov rax,0
-    mov rsi,rcx
-    mov rdi,rdx
-    mov rcx,2
-    repe cmpsb
-    jne ElementosSonIgualesEnd
-    mov rax,1
-    ElementosSonIgualesEnd:
-    ret
-    
-
 InstanciasDeIgualdadFull:
     ;rcx no se usa
-    ;rdx numero de array 2, se lo pasa a rsi temporalmente para usar rdx de parametro a TamanoDeArray, y se lo devuelve dsp
-    mov rbp,[numeroArray1]
-    mov rsi,[numeroArray2]
-    
     ;rbp numero de array 1 
-    ;rdx numero de array 2 
+    ;rdx numero de array 2, se lo pasa a rsi temporalmente para usar rdx de parametro a TamanoDeArray, y se lo devuelve dsp 
     ;r8 direccion de array 1
     ;r9 direccion de array 2
     ;r10 iterador 1
@@ -168,9 +148,12 @@ InstanciasDeIgualdadFull:
     ;r13 puntero 1
     ;r14 puntero 2
     ;rsi,rdi,rcx se usan para el compsb
+    mov rbp,[numeroArray1]
     mov rdx,rbp
     call TamanoDeArray
     mov [tamanoArray1],rax
+    
+    mov rsi,[numeroArray2]
     mov rdx,rsi
     call TamanoDeArray
     mov [tamanoArray2],rax
@@ -235,7 +218,14 @@ input2:
     sub rsp,32
     call gets
     add rsp,32
-    
+    ;perdon por lo que estas a punto de presenciar
+    mov rax,[numeroArray2]
+    add rax,-48
+    mov [numeroArray2],rax
+    mov rax,[numeroArray1]
+    add rax,-48
+    mov [numeroArray1],rax
+    ;perdon por lo que acabas de presenciar
     ret
 
 input3:
@@ -315,4 +305,10 @@ igualdad:
     ret
 
 union:;WORK IN PROGRESS
+    ret
+
+InstanciasDeIgualdadFullb:
+    mov qword[coincidencias],3
+    mov qword[tamanoArray1],3
+    mov qword[tamanoArray2],4
     ret
