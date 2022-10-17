@@ -11,7 +11,8 @@ section     .data
     textSize        db  "La cadena ingresada tiene %lli elementos",10,0
     textInclucion   db  "La cadena %lli incluye a la cadena %lli",10,10,0
     textIgualdad    db  "La cadenas %lli y %lli son iguales",10,10,0
-    cadena  times 240 db 0
+    textSearch2     db  "El elemento %c%c se encuentra en la cadena %lli",10,10,10,0
+    cadena  times 240 db 0;6*(20*2)
     placeholder db 0
 
 section     .bss
@@ -247,6 +248,9 @@ Analizar:
     call SegundoIncluyePrimero
     call igualdad
     call union
+
+    call input3
+    call BuscarElemento
     ret
 
 PrimeroIncluyeSegundo:
@@ -311,4 +315,60 @@ InstanciasDeIgualdadFullb:
     mov qword[coincidencias],3
     mov qword[tamanoArray1],3
     mov qword[tamanoArray2],4
+    ret
+
+BuscarElemento:;falta probar
+    mov r12,cadena
+    mov r13,1;contador
+    BuscarElementoLoop:
+    
+    mov rcx,2
+    mov rdi,r12
+    mov rsi,elementoAux2
+    repe cmpsb
+    jne BuscarElementoAbajo
+
+    call printElemento
+
+    BuscarElementoAbajo:
+
+    add r12,2
+    inc r13
+
+
+    cmp r13,121
+    jne BuscarElementoLoop
+    ret
+    
+
+printElemento:
+    mov r14,r13
+    mov r9,0
+
+    cmp r14,20
+    jle printElementoEnd
+    inc r9
+    cmp r14,40
+    jle printElementoEnd
+    inc r9
+    cmp r14,60
+    jle printElementoEnd
+    inc r9
+    cmp r14,80
+    jle printElementoEnd
+    inc r9
+    cmp r14,100
+    jle printElementoEnd
+    inc r9
+    
+    printElementoEnd:
+
+    mov rcx,textSearch2
+    mov rdx,[elementoAux2]
+    mov r8,elementoAux2
+    inc r8
+    mov r8,[r8]
+    sub rsp,32
+    call printf
+    add rsp,32
     ret
