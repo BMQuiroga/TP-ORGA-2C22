@@ -20,11 +20,13 @@ section     .bss
     
     elementoAux1    resw 1
     elementoAux2    resw 1
+    elementoAux3    resw 1
     tamanoArray1    resq 1
     tamanoArray2    resq 1
     numeroArray1    resq 1
     numeroArray2    resq 1
     coincidencias   resq 1
+    check           resb 1
 
 
     
@@ -328,7 +330,7 @@ BuscarElemento:;falta probar
     repe cmpsb
     jne BuscarElementoAbajo
 
-    call printElemento
+    call printAparicionesElemento
 
     BuscarElementoAbajo:
 
@@ -341,7 +343,7 @@ BuscarElemento:;falta probar
     ret
     
 
-printElemento:
+printAparicionesElemento:;sin probar
     mov r14,r13
     mov r9,0
 
@@ -371,4 +373,83 @@ printElemento:
     sub rsp,32
     call printf
     add rsp,32
+    ret
+
+printUnion:
+    call printArray1
+    call printArray2
+
+printArray1:
+    mov r10,[numeroArray1]
+    mov r11,0
+    mov r12,[tamanoArray1]
+    printArray1Loop:
+    
+    ;elementoXDelArrayA:;devuelve el elemento
+    ;rdx numero del elemento
+    ;rcx numero del array
+
+    mov rdx,r11
+    mov rcx,r10
+
+    call elementoXDelArrayA
+
+    mov rcx,[elementoAux1]
+    sub rsp,32
+    call printf
+    add rsp,32
+
+    call printSpace
+
+    inc r11
+    cmp r11,r12
+    jne printArray1Loop
+    ret
+
+printSpace:
+    push rcx
+    mov rcx,' '
+    sub rsp,32
+    call printf
+    add rsp,32
+    pop rcx
+    ret
+
+printArray2:
+    mov r10,[numeroArray2]
+    mov r11,0
+    mov r12,[tamanoArray2]
+    printArray1Loop:
+    
+    ;elementoXDelArrayA:;devuelve el elemento
+    ;rdx numero del elemento
+    ;rcx numero del array
+
+    mov rdx,r11
+    mov rcx,r10
+
+    call elementoXDelArrayA
+
+    mov rcx,[elementoAux1]
+
+    call perteneceAlArray;FALTA HACER
+
+    cmp byte[check],'S';COMO HACE EL RETURN,
+
+    sub rsp,32
+    call printf
+    add rsp,32
+
+    call printSpace
+
+    inc r11
+    cmp r11,r12
+    jne printArray1Loop
+    ret
+
+perteneceAlArray:
+    mov byte[check],'N'
+    ;no puede modificar r10,r11,r12
+    ;recibe la direccion en rcx
+    mov r13,[tamanoArray1]
     ret
