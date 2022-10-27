@@ -252,8 +252,8 @@ Analizar:
     call igualdad
     call union
 
-    ;call input3
-    ;call BuscarElemento
+    call input3
+    call BuscarElemento
     ret
 
 PrimeroIncluyeSegundo:
