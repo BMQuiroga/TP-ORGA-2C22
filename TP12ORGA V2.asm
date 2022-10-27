@@ -11,7 +11,7 @@ section     .data
     textSize        db  "La cadena ingresada tiene %lli elementos",10,0
     textInclucion   db  "La cadena %lli incluye a la cadena %lli",10,10,0
     textIgualdad    db  "La cadenas %lli y %lli son iguales",10,10,0
-    textSearch2     db  "El elemento %c%c se encuentra en la cadena %lli",10,10,10,0
+    textSearch2     db  "El elemento [%c%c] se encuentra en la cadena %lli",10,10,10,0
     cadena  times 240 db 0;6*(20*2)
     placeholder db 0
 
@@ -161,11 +161,11 @@ InstanciasDeIgualdadFull:
     call TamanoDeArray
     mov [tamanoArray2],rax
 
-    mov rdx,rsi ;numero array 2 queda en rdx
+    mov rdx,[numeroArray2] ;numero array 2 queda en rdx
 
     imul r8,rbp,40
     add r8,cadena
-    imul r9,rsi,40
+    imul r9,rdx,40
     add r9,cadena
 
     mov r12,0
@@ -193,6 +193,7 @@ InstanciasDeIgualdadFull:
     add r14,2
     mov r13,r8
     inc r11
+    mov r10,0
 
     cmp r11,[tamanoArray2]
     jl Loop1
@@ -251,8 +252,8 @@ Analizar:
     call igualdad
     call union
 
-    call input3
-    call BuscarElemento
+    ;call input3
+    ;call BuscarElemento
     ret
 
 PrimeroIncluyeSegundo:
@@ -419,7 +420,7 @@ printArray2:
     mov r10,[numeroArray2]
     mov r11,0
     mov r12,[tamanoArray2]
-    printArray1Loop:
+    printArray2Loop:
     
     ;elementoXDelArrayA:;devuelve el elemento
     ;rdx numero del elemento
@@ -444,7 +445,7 @@ printArray2:
 
     inc r11
     cmp r11,r12
-    jne printArray1Loop
+    jne printArray2Loop
     ret
 
 perteneceAlArray:
