@@ -12,9 +12,10 @@ section     .data
     textInclucion   db  "La cadena %lli incluye a la cadena %lli",10,10,0
     textIgualdad    db  "La cadenas %lli y %lli son iguales",10,10,0
     textSearch2     db  "El elemento [%c%c] se encuentra en la cadena %lli",10,10,10,0
-    cadena  times 240 db 0;6*(20*2)
-    placeholder db 0
+    cadena          times 240 db 0;6*(20*2)
+    placeholder     db 0
     elementoquit    dw  "  "
+    space           db  " "
 
 section     .bss
     ;cadena1     resw 100
@@ -53,28 +54,28 @@ main:
     
     call input2
     
-    mov r8,[numeroArray1]
-    mov r9,[numeroArray2]
-    cmp r8,r9
-    je maininput3
+    ;mov r8,[numeroArray1]
+    ;mov r9,[numeroArray2]
+    ;cmp r8,r9
+    ;je maininput3
     
     call Analizar
     
-    jmp maininput2
+    ;jmp maininput2
     
     maininput3:
 
-    call input3
+    ;call input3
     
-    mov r8w,[elementoAux2]
-    cmp r8w,[elementoquit]
-    je mainsalir
+    ;mov r8w,[elementoAux2]
+    ;cmp r8w,[elementoquit]
+    ;je mainsalir
     
-    call BuscarElemento
+    ;call BuscarElemento
     
-    jmp maininput3
+    ;jmp maininput3
     
-    mainsalir:
+    ;mainsalir:
     ret
  
 input:
@@ -270,7 +271,7 @@ Analizar:
     call PrimeroIncluyeSegundo
     call SegundoIncluyePrimero
     call igualdad
-    call union
+    call printUnion
     ret
 
 PrimeroIncluyeSegundo:
@@ -328,8 +329,6 @@ igualdad:
     noigualdad:
     ret
 
-union:;WORK IN PROGRESS
-    ret
 
 InstanciasDeIgualdadFullb:
     mov qword[coincidencias],3
@@ -395,43 +394,43 @@ printAparicionesElemento:;sin probar
 
 printUnion:
     call printArray1
-    call printArray2
+    ;call printArray2
+    ret
 
 printArray1:
+    mov rsi,0;contador y marcador de numero de elemento
+    ;mov rdi,98
     mov r10,[numeroArray1]
-    mov r11,0
-    mov r12,[tamanoArray1]
     printArray1Loop:
     
     ;elementoXDelArrayA:;devuelve el elemento
     ;rdx numero del elemento
     ;rcx numero del array
 
-    mov rdx,r11
+    mov rdx,rsi
     mov rcx,r10
 
     call elementoXDelArrayA
-
-    mov rcx,[elementoAux1]
+    
+   
+    
+    ;mov rcx,0
+    ;mov cx,[elementoAux1]
+    mov rcx,elementoAux1
     sub rsp,32
     call printf
     add rsp,32
 
-    call printSpace
-
-    inc r11
-    cmp r11,r12
+    mov rcx,space
+    sub rsp,32
+    call printf
+    add rsp,32
+        
+    inc rsi
+    cmp rsi,[tamanoArray1]
     jne printArray1Loop
     ret
 
-printSpace:
-    push rcx
-    mov rcx,' '
-    sub rsp,32
-    call printf
-    add rsp,32
-    pop rcx
-    ret
 
 printArray2:
     mov r10,[numeroArray2]
@@ -458,7 +457,10 @@ printArray2:
     call printf
     add rsp,32
 
-    call printSpace
+    mov rcx,space
+    sub rsp,32
+    call printf
+    add rsp,32
 
     inc r11
     cmp r11,r12
