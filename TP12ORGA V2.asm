@@ -12,6 +12,8 @@ section     .data
     textInclucion   db  "La cadena %lli incluye a la cadena %lli",10,10,0
     textIgualdad    db  "La cadenas %lli y %lli son iguales",10,10,0
     textSearch2     db  "El elemento [%c%c] se encuentra en la cadena %lli",10,10,10,0
+    textUnion       db  "La union de las cadenas %lli y %lli es: ",10,10,0
+    textInvalido    db  "Alguna de las cadenas ingresadas es invalida, vuelvalo a intentar",0
     cadena          times 240 db 0;6*(20*2)
     placeholder     db 0
     elementoquit    dw  "  "
@@ -20,9 +22,9 @@ section     .data
 section     .bss
     ;cadena1     resw 100
     
-    elementoAux1    resw 1
-    elementoAux2    resw 1
-    elementoAux3    resw 1
+    elementoAux1    resw 1;la func elementoXdelArrayA devuelve el resultado aca, tambien es usado por printArray2
+    elementoAux2    resw 1;aca va el elemento de input
+    ;elementoAux3    resw 1;usado por el printArray2
     tamanoArray1    resq 1
     tamanoArray2    resq 1
     numeroArray1    resq 1
@@ -50,6 +52,16 @@ main:
     cmp rsi,5
     jle inicio
     
+    call validador;
+    cmp byte[check],'V';VALIDADOR DEJA EN AL UNA V de valido O UNA N
+    je maininput2
+    mov rcx,textInvalido
+    sub rsp,32
+    call printf
+    add rsp,32
+    mov rsi,0
+    jmp inicio
+
     maininput2:
     
     call input2
@@ -393,14 +405,21 @@ printAparicionesElemento:;sin probar
     ret
 
 printUnion:
+    mov rcx,textUnion
+    mov rdx,[numeroArray1]
+    mov r8, [numeroArray2]
+    sub rsp,32
+    call printf
+    add rsp,32
+
     call printArray1
-    ;call printArray2
+    call printArray2
     ret
 
 printArray1:
     mov rsi,0;contador y marcador de numero de elemento
     ;mov rdi,98
-    mov r10,[numeroArray1]
+    
     printArray1Loop:
     
     ;elementoXDelArrayA:;devuelve el elemento
@@ -408,7 +427,7 @@ printArray1:
     ;rcx numero del array
 
     mov rdx,rsi
-    mov rcx,r10
+    mov rcx,[numeroArray1]
 
     call elementoXDelArrayA
     
@@ -433,17 +452,15 @@ printArray1:
 
 
 printArray2:
-    mov r10,[numeroArray2]
-    mov r11,0
-    mov r12,[tamanoArray2]
+    mov r15,0;contador y marcador de numero de elemento
     printArray2Loop:
     
     ;elementoXDelArrayA:;devuelve el elemento
     ;rdx numero del elemento
     ;rcx numero del array
 
-    mov rdx,r11
-    mov rcx,r10
+    mov rdx,r15
+    mov rcx,[numeroArray2]
 
     call elementoXDelArrayA
 
@@ -452,7 +469,9 @@ printArray2:
     call perteneceAlArray;FALTA HACER
 
     cmp byte[check],'S';COMO HACE EL RETURN,
-
+    je printArray2Repeat
+    
+    mov rcx,elementoAux1
     sub rsp,32
     call printf
     add rsp,32
@@ -461,15 +480,41 @@ printArray2:
     sub rsp,32
     call printf
     add rsp,32
+    
+    printArray2Repeat:
 
-    inc r11
-    cmp r11,r12
+    inc r15
+    cmp r15,[tamanoArray2]
     jne printArray2Loop
     ret
 
 perteneceAlArray:
     mov byte[check],'N'
-    ;no puede modificar r10,r11,r12
-    ;recibe la direccion en rcx
-    mov r13,[tamanoArray1]
+    ;no puede modificar r15
+    mov r13,[numeroArray1]
+    imul r13,[numeroArray1],40
+    add r13,cadena
+    mov r14,0;contador
+    perteneceAlArrayStart:
+    mov rcx,2
+    mov rsi,r13
+    mov rdi,elementoAux1
+    repe cmpsb
+    je perteneceAlArraySi
+    add r14,1
+    add r13,2
+    cmp r14,[tamanoArray1]
+    je perteneceAlArrayNo
+    jmp perteneceAlArrayStart
+
+    perteneceAlArraySi:
+    mov byte[check],'S'
+    perteneceAlArrayNo:
+    ret
+
+validador:
+    mov byte[check],'N'
+    ;AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+    ;SI SE LE QUIERE AÑADIR UN VALIDADOR AL FINAL DE CADA CADENA, DEBE SER DE 2 BYTES (osea 22 en vez de 20)
+    mov byte[check],'V'
     ret
