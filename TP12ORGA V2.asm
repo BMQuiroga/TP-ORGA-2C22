@@ -4,16 +4,17 @@ extern  gets
 extern	printf
 
 section     .data
-    textCadena      db  "Ingrese la cadena numero %lli",10,0
-    textInput1      db  "Ingrese la primera cadena a analizar",0
-    textInput2      db  "Ingrese la segunda cadena a analizar",0
-    textSearch      db  "Ingrese un elemento a buscar",0
+    textCadena      db  "Ingrese la cadena numero %lli: ",10,0
+    textInput1      db  "Ingrese la primera cadena a analizar: ",0
+    textInput2      db  "Ingrese la segunda cadena a analizar, para seguir ingrese el mismo numero que en la primera: ",0
+    textSearch      db  "Ingrese un elemento a buscar, para salir ingrese el elemento '  ' (doble espacio, sin comillas): ",0
     textSize        db  "La cadena ingresada tiene %lli elementos",10,0
     textInclucion   db  "La cadena %lli incluye a la cadena %lli",10,10,0
     textIgualdad    db  "La cadenas %lli y %lli son iguales",10,10,0
     textSearch2     db  "El elemento [%c%c] se encuentra en la cadena %lli",10,10,10,0
     cadena  times 240 db 0;6*(20*2)
     placeholder db 0
+    elementoquit    dw  "  "
 
 section     .bss
     ;cadena1     resw 100
@@ -48,13 +49,32 @@ main:
     cmp rsi,5
     jle inicio
     
-    ;call debug
+    maininput2:
     
     call input2
     
+    mov r8,[numeroArray1]
+    mov r9,[numeroArray2]
+    cmp r8,r9
+    je maininput3
+    
     call Analizar
+    
+    jmp maininput2
+    
+    maininput3:
 
-
+    call input3
+    
+    mov r8w,[elementoAux2]
+    cmp r8w,[elementoquit]
+    je mainsalir
+    
+    call BuscarElemento
+    
+    jmp maininput3
+    
+    mainsalir:
     ret
  
 input:
@@ -251,9 +271,6 @@ Analizar:
     call SegundoIncluyePrimero
     call igualdad
     call union
-
-    call input3
-    call BuscarElemento
     ret
 
 PrimeroIncluyeSegundo:
