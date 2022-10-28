@@ -517,5 +517,7 @@ validador:
     mov byte[check],'N'
     ;AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
     ;SI SE LE QUIERE AÑADIR UN VALIDADOR AL FINAL DE CADA CADENA, DEBE SER DE 2 BYTES (osea 22 en vez de 20)
+
+    ;2 validaciones: que cada cadena tenga solo chars validos y que no se hallan ingresado de mas
     mov byte[check],'V'
     ret
