@@ -18,6 +18,7 @@ section     .data
     placeholder     db 0
     elementoquit    dw  "  "
     space           db  " "
+    cadenaValida    db  "ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789"
 
 section     .bss
     ;cadena1     resw 100
