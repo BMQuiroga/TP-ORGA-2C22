@@ -99,3 +99,23 @@ ElementoPerteneceAlArray:;sin probar
     ElementoPerteneceAlArrayEnd:
     mov rdx,r13
     ret
+
+validarOverflow:
+    mov byte[check2],'S'
+    mov rcx,cadena
+    mov r9,0
+    validarOverflowLoop:
+    add rcx,41
+    mov r8,[rcx]
+    cmp r8,[placeholder]
+    jne validarOverflowError
+    inc r9
+    add rcx,2
+    cmp r9,6
+    ;(cada cadena tiene 20 espacios para elementos y un espacio para el enter)
+    jne validarOverflowLoop
+    jmp validarOverflowEnd
+    validarOverflowError:
+    ;mov byte[check2],'N'
+    validarOverflowEnd:
+    ret

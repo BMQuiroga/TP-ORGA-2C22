@@ -4,7 +4,7 @@ extern  gets
 extern	printf
 
 section     .data
-    cadenaValida    db  "ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789";37
+    cadenaValida    db  " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";37
     textStart       db  "Las cadenas se inputean con todos los elementos sin separacion, el el caso de haber un elemento de 1 char, usar espacio como 2do char",0
     textCadena      db  "Ingrese la cadena numero %lli: ",10,0
     textInput1      db  "Ingrese la primera cadena a analizar: ",0
@@ -16,11 +16,11 @@ section     .data
     textSearch2     db  "El elemento [%c%c] se encuentra en la cadena %lli",10,10,10,0
     textUnion       db  "La union de las cadenas %lli y %lli es: ",10,10,0
     textInvalido    db  "Alguna de las cadenas ingresadas es invalida, vuelvalo a intentar",0
-    cadena          times 252 db  " ";6*(21*2) + espacio extra
+    cadena          times 253 db  " ";6*(21*2) + 1 espacio extra
     placeholder     db " "
     elementoquit    dw "  "
     space           db  " ",0
-    cadenaRelleno   times 252 db  " "
+    cadenaRelleno   times 253 db  " "
 
 section     .bss
     ;cadena1     resw 100
@@ -59,16 +59,16 @@ main:
     cmp rsi,5
     jle inicio
     
-    ;call validador;
-    ;cmp byte[check],'V';VALIDADOR DEJA EN AL UNA V de valido O UNA N
-    ;je maininput2
+    call validador;
+    cmp byte[check],'V';VALIDADOR DEJA EN AL UNA V de valido O UNA N
+    je maininput2
     mov rcx,textInvalido
     sub rsp,32
     call printf
     add rsp,32
     call reescribir
     mov rsi,0
-    ;jmp inicio
+    jmp inicio
 
     maininput2:
     
@@ -385,19 +385,19 @@ printAparicionesElemento:;sin probar
     mov r9,0
 
     cmp r14,21
-    jle printElementoEnd
+    jl printElementoEnd
     inc r9
     cmp r14,42
-    jle printElementoEnd
+    jl printElementoEnd
     inc r9
     cmp r14,63
-    jle printElementoEnd
+    jl printElementoEnd
     inc r9
     cmp r14,84
-    jle printElementoEnd
+    jl printElementoEnd
     inc r9
     cmp r14,106
-    jle printElementoEnd
+    jl printElementoEnd
     inc r9
     
     printElementoEnd:
@@ -546,26 +546,41 @@ validador:
     ret
 
 validarChars:
+    mov r15,0
+    mov rax,0
     mov rcx,0
     mov r8,cadena
     validarCharsLoop:
-    mov r9,[r8]
+    mov byte[check2],'V'
+    mov al,[r8]
     call validarCharIndividual
     cmp byte[check2],'N'
+    jne validarCharsAbajo
+    inc r15;r15 es errores
+    validarCharsAbajo:
+    cmp r15,7
     je validarCharsEnd
     inc r8
     inc rcx
     cmp rcx,252
     jne validarCharsLoop
     validarCharsEnd:
+    cmp r15,6
+    ;que paso aca? originalmente la cantidad de errores permitidos era 0, pero los '0/000' (enter) no son validos, asi que la cantidad de chars
+    ;validos tiene que ser 6, ahora, si una cadena es mas larga de lo esperado, la cadena siguiente sobreescribe el enter de la cadena anterior
+    ;por lo que checkear que haya exactamente 6 chars invalidos checkea tanto chars validos como overflow
+    ;(cada cadena tiene 20 espacios para elementos y un espacio para el enter)
+    jne validarCharsEnd2
+    mov byte[check2],'V'
+    validarCharsEnd2:  
     ret
 
 validarCharIndividual:
     mov rbx,0
     mov rdx,cadenaValida
     validarCharIndividualLoop:
-    mov r10,[rdx]
-    cmp r9,r10
+    mov ah,[rdx]
+    cmp al,ah
     je validarCharIndividualEnd
     inc rbx
     inc rdx
@@ -578,25 +593,21 @@ validarCharIndividual:
 reescribir:;ponele
     mov rsi,cadenaRelleno
     mov rdi,cadena
-    mov rcx,252
+    mov rcx,253
     rep movsb
     ret
 
 validarOverflow:
     mov byte[check2],'S'
     mov rcx,cadena
-    mov r9,0
-    validarOverflowLoop:
-    add rcx,41
-    mov r8,[rcx]
-    cmp r8,[placeholder]
-    jne validarOverflowError
-    inc r9
-    add rcx,2
-    cmp r9,6
-    jne validarOverflowLoop
-    jmp validarOverflowEnd
-    validarOverflowError:
+    add rcx,251
+    mov rdi,placeholder
+    mov rsi,rcx
+    mov rcx,1
+    repe cmpsb
+    ;por lo aclarado anteriormente, falta checkear que la ultima cadena no tenga overflow, se hace reservando un byte de mas despues de los 42
+    ;de c/cadena y checkear que sea un espacio
+    je validarOverflowEnd
     mov byte[check2],'N'
     validarOverflowEnd:
     ret
