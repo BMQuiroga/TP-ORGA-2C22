@@ -16,11 +16,11 @@ section     .data
     textSearch2     db  "El elemento [%c%c] se encuentra en la cadena %lli",10,10,10,0
     textUnion       db  "La union de las cadenas %lli y %lli es: ",10,10,0
     textInvalido    db  "Alguna de las cadenas ingresadas es invalida, vuelvalo a intentar",0
-    cadena          times 253 db  " ";6*(21*2) + 1 espacio extra
+    cadena          times 252 db  " ";6*(21*2) 
     placeholder     db " "
     elementoquit    dw "  "
     space           db  " ",0
-    cadenaRelleno   times 253 db  " "
+    cadenaRelleno   times 252 db  " "
 
 section     .bss
     ;cadena1     resw 100
@@ -593,7 +593,7 @@ validarCharIndividual:
 reescribir:;ponele
     mov rsi,cadenaRelleno
     mov rdi,cadena
-    mov rcx,253
+    mov rcx,252
     rep movsb
     ret
 
