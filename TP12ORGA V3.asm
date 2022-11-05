@@ -62,12 +62,12 @@ main:
     ;call validador;
     ;cmp byte[check],'V';VALIDADOR DEJA EN AL UNA V de valido O UNA N
     ;je maininput2
-    ;mov rcx,textInvalido
-    ;sub rsp,32
-    ;call printf
-    ;add rsp,32
-    ;call reescribir
-    ;mov rsi,0
+    mov rcx,textInvalido
+    sub rsp,32
+    call printf
+    add rsp,32
+    call reescribir
+    mov rsi,0
     ;jmp inicio
 
     maininput2:
