@@ -5,6 +5,7 @@ extern	printf
 
 section     .data
     cadenaValida    db  "ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789";37
+    textStart       db  "Las cadenas se inputean con todos los elementos sin separacion, el el caso de haber un elemento de 1 char, usar espacio como 2do char",0
     textCadena      db  "Ingrese la cadena numero %lli: ",10,0
     textInput1      db  "Ingrese la primera cadena a analizar: ",0
     textInput2      db  "Ingrese la segunda cadena a analizar, para seguir ingrese el mismo numero que en la primera: ",0
@@ -41,6 +42,9 @@ section     .bss
 section     .text
 main:
     mov rbp, rsp; for correct debugging
+    
+    call startMsg
+
     mov rsi,0
     inicio:   
     mov rdx,rsi
@@ -81,13 +85,13 @@ main:
     
     maininput3:
 
-    ;call input3
+    call input3
     
     ;mov r8w,[elementoAux2]
     ;cmp r8w,[elementoquit]
     ;je mainsalir
     
-    ;call BuscarElemento
+    call BuscarElemento
     
     ;jmp maininput3
     
@@ -556,7 +560,7 @@ validarChars:
     validarCharsEnd:
     ret
 
-validarCharIndividual
+validarCharIndividual:
     mov rbx,0
     mov rdx,cadenaValida
     validarCharIndividualLoop:
@@ -595,4 +599,11 @@ validarOverflow:
     validarOverflowError:
     mov byte[check2],'N'
     validarOverflowEnd:
+    ret
+    
+startMsg:
+    mov rcx,textStart
+    sub rsp,32
+    call printf
+    add rsp,32
     ret
