@@ -4,6 +4,7 @@ extern  gets
 extern	printf
 
 section     .data
+    cadenaValida    db  "ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789";37
     textCadena      db  "Ingrese la cadena numero %lli: ",10,0
     textInput1      db  "Ingrese la primera cadena a analizar: ",0
     textInput2      db  "Ingrese la segunda cadena a analizar, para seguir ingrese el mismo numero que en la primera: ",0
@@ -17,8 +18,7 @@ section     .data
     cadena          times 252 db  " ";6*(21*2) + espacio extra
     placeholder     db " "
     elementoquit    dw "  "
-    space           db  " "
-    cadenaValida    db  "ABCDEFGHIJKLMNOPQRSTUVWXYZ 0123456789";37
+    space           db  " ",0
     cadenaRelleno   times 252 db  " "
 
 section     .bss
@@ -55,16 +55,16 @@ main:
     cmp rsi,5
     jle inicio
     
-    call validador;
-    cmp byte[check],'V';VALIDADOR DEJA EN AL UNA V de valido O UNA N
-    je maininput2
-    mov rcx,textInvalido
-    sub rsp,32
-    call printf
-    add rsp,32
-    call reescribir
-    mov rsi,0
-    jmp inicio
+    ;call validador;
+    ;cmp byte[check],'V';VALIDADOR DEJA EN AL UNA V de valido O UNA N
+    ;je maininput2
+    ;mov rcx,textInvalido
+    ;sub rsp,32
+    ;call printf
+    ;add rsp,32
+    ;call reescribir
+    ;mov rsi,0
+    ;jmp inicio
 
     maininput2:
     
@@ -443,13 +443,21 @@ printArray1:
     sub rsp,32
     call printf
     add rsp,32
-
+    
+    inc rsi
+    cmp rsi,[tamanoArray1]
+    je printAray1Abajo;no tiene que imprimir un espacio en el ultimo elemento
+    
+    
+    
     mov rcx,space
     sub rsp,32
     call printf
     add rsp,32
-        
-    inc rsi
+    
+    printAray1Abajo:
+    
+    
     cmp rsi,[tamanoArray1]
     jne printArray1Loop
     ret
@@ -470,7 +478,7 @@ printArray2:
 
     mov rcx,[elementoAux1]
 
-    call perteneceAlArray;FALTA HACER
+    call perteneceAlArray
 
     cmp byte[check],'S';COMO HACE EL RETURN,
     je printArray2Repeat
