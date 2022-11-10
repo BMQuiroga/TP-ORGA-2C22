@@ -16,7 +16,7 @@ section     .data
     textIgualdad    db  "La cadenas %lli y %lli son iguales",10,0
     textSearch2     db  "El elemento [%c%c] se encuentra en la cadena %lli",10,0
     textUnion       db  "La union de las cadenas %lli y %lli es: ",10,0 
-    textInvalido    db  "Alguna de las cadenas ingresadas es invalida, vuelvalo a intentar",0
+    textInvalido    db  "Alguna de las cadenas ingresadas es invalida, vuelvalo a intentar",10,0
     cadena          times 252 db  " ";6*(21*2) 
     placeholder     db " "
     elementoquit    dw "  "
@@ -302,7 +302,7 @@ PrimeroIncluyeSegundo:
     cmp rax,rbx
     jle PrimeroNoIncluyeSegundo;1 tiene que ser mayor en tamaño
     cmp rcx,rbx
-    jne PrimeroNoIncluyeSegundo;1 y 2 comparten todos los elementos de 2
+    jl PrimeroNoIncluyeSegundo;1 y 2 comparten todos los elementos de 2
 
     mov rcx,textInclucion 
     mov rdx,[numeroArray1]
@@ -320,9 +320,9 @@ SegundoIncluyePrimero:
     cmp rbx,rax
     jle SegundoNoIncluyePrimero;2 tiene que ser mayor en tamaño
     cmp rcx,rax
-    jne SegundoNoIncluyePrimero;1 y 2 comparten todos los elementos de 1
+    jl SegundoNoIncluyePrimero;1 y 2 comparten todos los elementos de 1
 
-    mov rcx,textInclucion 
+    mov rcx,textInclucion;305 Y 323 ERAN JNE, version 1.1 entrega
     mov rdx,[numeroArray2]
     mov r8,[numeroArray1]
     sub rsp,32
@@ -608,7 +608,7 @@ reescribir:;ponele
 validarOverflow:
     mov byte[check2],'S'
     mov rcx,cadena
-    add rcx,251
+    add rcx,43;251 para el 6
     mov rdi,placeholder
     mov rsi,rcx
     mov rcx,1
