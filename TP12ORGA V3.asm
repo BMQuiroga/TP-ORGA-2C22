@@ -339,7 +339,8 @@ igualdad:
     jne noigualdad;misma cdad de elementos
     cmp rcx,rax
     jne noigualdad;cdad de elementos igual a las coincidencias
-
+    ;V 1.2 PODRIA SER JL
+    ;V 1.2 PUEDE NO FUNCIONAR CON ELEMENTOS REPETIDOS
     mov rcx,textIgualdad 
     mov rdx,[numeroArray1]
     mov r8,[numeroArray2]
@@ -544,7 +545,7 @@ validador:
     cmp byte[check2],'N'
     je validadorEnd
 
-    call validarOverflow
+    call validarOverflowMultiple
     cmp byte[check2],'N'
     je validadorEnd
 
@@ -608,7 +609,7 @@ reescribir:;ponele
 validarOverflow:
     mov byte[check2],'S'
     mov rcx,cadena
-    add rcx,43;251 para el 6
+    add rcx,r12;251 para el 6
     mov rdi,placeholder
     mov rsi,rcx
     mov rcx,1
@@ -626,3 +627,19 @@ startMsg:
     call printf
     add rsp,32
     ret
+
+validarOverflowMultiple:
+    ;explicar como se me escapa ese ultimo byte
+    mov r12,41
+    mov r13,0
+    validarOverflowMultipleLoop:
+    call validarOverflow
+    add r12,42
+    inc r13
+    cmp byte[check2],'N'
+    je validarOverflowMultipleError
+    cmp r13,6;Cantidad de cadenas
+    jne validarOverflowMultipleLoop
+    validarOverflowMultipleError:
+    ret
+    
