@@ -5,10 +5,10 @@ extern	printf
 
 section     .data
     cadenaValida    db  " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";37
-    textStart       db  "Las cadenas se inputean con todos los elementos sin separacion, el el caso de haber un elemento de 1 char, usar espacio como 2do char",0
+    textStart       db  "Las cadenas se inputean con todos los elementos sin separacion, en el caso de haber un elemento de 1 char, usar espacio como 2do char",0
     textCadena      db  "Ingrese la cadena numero %lli: ",10,0
     textInput1      db  "Ingrese la primera cadena a analizar: ",0
-    textInput2      db  "Ingrese la segunda cadena a analizar, para seguir ingrese el mismo numero que en la primera: ",0
+    textInput2      db  "Ingrese la segunda cadena a analizar, para salir ingrese el mismo numero que en la primera: ",0
     textSearch      db  "Ingrese un elemento a buscar, para salir ingrese el elemento '  ' (doble espacio, sin comillas): ",0
     textSize        db  "La cadena ingresada tiene %lli elementos",10,0
     textInclucion   db  "La cadena %lli incluye a la cadena %lli",10,10,0
@@ -74,28 +74,28 @@ main:
     
     call input2
     
-    ;mov r8,[numeroArray1]
-    ;mov r9,[numeroArray2]
-    ;cmp r8,r9
-    ;je maininput3
+    mov r8,[numeroArray1]
+    mov r9,[numeroArray2]
+    cmp r8,r9
+    je maininput3
     
     call Analizar
     
-    ;jmp maininput2
+    jmp maininput2
     
     maininput3:
 
     call input3
     
-    ;mov r8w,[elementoAux2]
-    ;cmp r8w,[elementoquit]
-    ;je mainsalir
+    mov r8w,[elementoAux2]
+    cmp r8w,[elementoquit]
+    je mainsalir
     
     call BuscarElemento
     
-    ;jmp maininput3
+    jmp maininput3
     
-    ;mainsalir:
+    mainsalir:
     ret
  
 input:
