@@ -4,18 +4,18 @@ extern  gets
 extern	printf
 
 section     .data
+    textLineJump    db  "",10,0
     cadenaValida    db  " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";37
     textStart       db  "Las cadenas se inputean con todos los elementos sin separacion, en el caso de haber un elemento de 1 char, usar espacio como 2do char",10,0
     textCadena      db  "Ingrese la cadena numero %lli: ",10,0
     textInput1      db  "Ingrese la primera cadena a analizar: ",10,0
     textInput2      db  "Ingrese la segunda cadena a analizar, para salir ingrese el mismo numero que en la primera: ",10,0
-    textSearch      db  "Ingrese un elemento a buscar, para salir ingrese el elemento '  ' (doble espacio, sin comillas): ",0
+    textSearch      db  "Ingrese un elemento a buscar, para salir ingrese el elemento '  ' (doble espacio, sin comillas): ",10,0
     textSize        db  "La cadena ingresada tiene %lli elementos",10,0
-    textInclucion   db  "La cadena %lli incluye a la cadena %lli",10,10,0
-    textIgualdad    db  "La cadenas %lli y %lli son iguales",10,10,0
-    textSearch2     db  "El elemento [%c%c] se encuentra en la cadena %lli",10,10,10,0
-    textUnion       db  "La union de las cadenas %lli y %lli es: ",10,10,0
-    textLineJump    db  " ",10,0
+    textInclucion   db  "La cadena %lli incluye a la cadena %lli",10,0
+    textIgualdad    db  "La cadenas %lli y %lli son iguales",10,0
+    textSearch2     db  "El elemento [%c%c] se encuentra en la cadena %lli",10,0
+    textUnion       db  "La union de las cadenas %lli y %lli es: ",10,0 
     textInvalido    db  "Alguna de las cadenas ingresadas es invalida, vuelvalo a intentar",0
     cadena          times 252 db  " ";6*(21*2) 
     placeholder     db " "
@@ -421,8 +421,15 @@ printUnion:
     call printf
     add rsp,32
 
+ 
+
     call printArray1
     call printArray2
+    
+    mov rcx,textLineJump
+    sub rsp,32
+    call printf
+    add rsp,32
     ret
 
 printArray1:
@@ -618,13 +625,4 @@ startMsg:
     sub rsp,32
     call printf
     add rsp,32
-    ret
-    
-printLineJump:
-    pusha
-    mov rcx,textLineJump
-    sub rsp,32
-    call printf
-    add rsp,32
-    popa
     ret
