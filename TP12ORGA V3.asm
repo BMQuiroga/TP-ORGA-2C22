@@ -549,6 +549,10 @@ validador:
     cmp byte[check2],'N'
     je validadorEnd
 
+    ;call validarRepeticion
+    ;cmp byte[check2],'N'
+    ;je validadorEnd
+
     ;2 validaciones: que cada cadena tenga solo chars validos y que no se hallan ingresado de mas
     mov byte[check],'V'
     validadorEnd:
@@ -642,4 +646,23 @@ validarOverflowMultiple:
     jne validarOverflowMultipleLoop
     validarOverflowMultipleError:
     ret
-    
+
+validarRepeticion:
+    mov byte[check2],'S'
+    mov r12,0
+    validarRepeticionLoop:
+    call validarRepeticionCadena
+    inc r12
+    cmp r12,6
+    jne validarRepeticionLoop
+    ret
+
+validarRepeticionCadena:
+    mov r13,cadena
+    imul r13,r12,42
+    call validarRepeticionElemento
+
+
+
+
+validarRepeticionElemento:
