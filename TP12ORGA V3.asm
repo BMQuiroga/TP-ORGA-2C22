@@ -46,19 +46,7 @@ main:
     
     call startMsg
 
-    mov rsi,0
-    inicio:   
-    mov rdx,rsi
-    imul rdx,42
-    
-    add rdx,cadena
-    mov rcx, rdx
-    
-    mov rdx,rsi
-    call input
-    inc rsi
-    cmp rsi,5
-    jle inicio
+    call input1
     
     call validador;
     cmp byte[check],'V';VALIDADOR DEJA EN AL UNA V de valido O UNA N
@@ -99,7 +87,7 @@ main:
     mainsalir:
     ret
  
-input:
+inputA:
     ;rdx numero de ciclo
     ;rcx donde se deja la cadena
     mov rdi,rcx
@@ -666,3 +654,22 @@ validarRepeticionCadena:
 
 
 validarRepeticionElemento:
+    ret
+
+
+
+input1:
+    mov rsi,0
+    inicio:   
+    mov rdx,rsi
+    imul rdx,42
+    
+    add rdx,cadena
+    mov rcx, rdx
+    
+    mov rdx,rsi
+    call inputA
+    inc rsi
+    cmp rsi,5
+    jle inicio
+    ret
