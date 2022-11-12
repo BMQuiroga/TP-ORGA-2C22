@@ -17,6 +17,8 @@ section     .data
     textSearch2     db  "El elemento [%c%c] se encuentra en la cadena %lli",10,0
     textUnion       db  "La union de las cadenas %lli y %lli es: ",10,0 
     textInvalido    db  "Alguna de las cadenas ingresadas es invalida, vuelvalo a intentar",10,0
+    textInputB      db  "Ingrese el elemento %lli de la cadena %lli, para salir ingrese el elemento '  ' (doble espacio, sin comillas): ",0
+    textErrorB      db  "Elemento Invalido, vuelva a ingresar",10,0
     cadena          times 252 db  " ";6*(21*2) 
     placeholder     db " "
     elementoquit    dw "  "
@@ -28,7 +30,7 @@ section     .bss
     
     elementoAux1    resw 1;la func elementoXdelArrayA devuelve el resultado aca, tambien es usado por printArray2
     elementoAux2    resw 1;aca va el elemento de input
-    ;elementoAux3    resw 1;usado por el printArray2
+    elementoAux3    resd 1;usado por el input1B
     tamanoArray1    resq 1
     tamanoArray2    resq 1
     numeroArray1    resq 1
@@ -36,6 +38,7 @@ section     .bss
     coincidencias   resq 1
     check           resb 1
     check2          resb 1
+    endCadenacheck  resb 1
 
 
     
@@ -46,7 +49,7 @@ main:
     
     call startMsg
 
-    call input1
+    call input1B
     
     call validador;
     cmp byte[check],'V';VALIDADOR DEJA EN AL UNA V de valido O UNA N
@@ -58,7 +61,7 @@ main:
     call reescribir
     mov rsi,0
     jmp inicio
-
+    
     maininput2:
     
     call input2
@@ -446,8 +449,8 @@ printArray1:
     add rsp,32
     
     inc rsi
-    cmp rsi,[tamanoArray1]
-    je printAray1Abajo;no tiene que imprimir un espacio en el ultimo elemento
+    ;cmp rsi,[tamanoArray1]
+    ;je printAray1Abajo;no tiene que imprimir un espacio en el ultimo elemento
     
     
     
@@ -456,7 +459,7 @@ printArray1:
     call printf
     add rsp,32
     
-    printAray1Abajo:
+    ;printAray1Abajo:
     
     
     cmp rsi,[tamanoArray1]
@@ -658,7 +661,7 @@ validarRepeticionElemento:
 
 
 
-input1:
+input1A:
     mov rsi,0
     inicio:   
     mov rdx,rsi
@@ -673,3 +676,123 @@ input1:
     cmp rsi,5
     jle inicio
     ret
+
+input1B:
+    mov r12,0;cadena
+    mov r13,0;elemento
+    inicioinput1B:
+    call inputB
+    cmp byte[endCadenacheck],'E'
+    je input1Bendcadena
+    inc r13
+    cmp r13,20
+    jne inicioinput1B
+
+    input1Bendcadena:
+    mov r13,0
+    inc r12
+    cmp r12,6
+    jne inicioinput1B
+    ret
+
+inputB:
+    mov byte[endCadenacheck],'E'
+    mov rcx,textInputB
+    mov rdx,r13
+    mov r8,r12
+    sub rsp,32
+    call printf
+    add rsp,32
+    
+    call resetInputB
+    
+    mov rcx,elementoAux3
+    sub rsp,32
+    call gets
+    add rsp,32
+
+    mov rcx,2
+    mov rsi,elementoAux3
+    mov rdi,elementoquit
+    repe cmpsb
+    je inputBend
+    mov byte[endCadenacheck],'N'
+
+    call validadorB
+    cmp byte[check],'N'
+    jne inputBend
+    
+    mov rcx,textErrorB
+    sub rsp,32
+    call printf
+    add rsp,32
+    jmp inputB
+    inputBend:
+    
+    mov rsi,elementoAux3
+    mov rcx,2
+    imul rdi,r12,42
+    imul r8,r13,2
+    add rdi,r8
+    add rdi,cadena
+    rep movsb
+    
+    ret
+
+    ;imul rdi,r13,2
+    ;imul rsi,r12,42
+    ;add rdi,rsi
+    ;add rdi,cadena
+
+validadorB:
+    mov byte[check],'V'
+    ;no tocar r12,r13
+    mov rsi,elementoAux3;que no se vaya de tamaño
+    add rsi,3
+    mov rdi,placeholder
+    mov rcx,1
+    repe cmpsb
+    jne validadorBerror
+
+    mov rdx,cadenaValida;primer char valido
+    add rdx,1
+    mov al,[elementoAux3]
+    call validarCharIndividualB
+    cmp byte[check2],'N'
+    je validadorBerror
+
+    mov rdx,cadenaValida;primer char valido
+    mov r14,elementoAux3
+    inc r14
+    mov al,[r14]
+    call validarCharIndividualB
+    cmp byte[check2],'N'
+    je validadorBerror
+    
+    jmp validadorBend
+    validadorBerror:
+    mov byte[check],'N'
+    validadorBend:
+    ret
+
+validarCharIndividualB:
+    mov byte[check2],'S'
+    mov rbx,0
+    ;mov rdx,cadenaValida
+    validarCharIndividualLoopB:
+    mov ah,[rdx]
+    cmp al,ah
+    je validarCharIndividualEndB
+    inc rbx
+    inc rdx
+    cmp rbx,37
+    jne validarCharIndividualLoopB
+    mov byte[check2],'N'
+    validarCharIndividualEndB:
+    ret
+    
+resetInputB:
+    mov rcx,4
+    mov rdi,elementoAux3
+    mov rsi,cadenaRelleno
+    rep movsb
