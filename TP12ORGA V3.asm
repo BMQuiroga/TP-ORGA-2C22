@@ -6,10 +6,12 @@ extern	printf
 section     .data
     textLineJump    db  "",10,0
     cadenaValida    db  " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";37
-    textStart       db  "En el caso de haber un elemento de 1 char, usar espacio como 2do char.",10,0
-    textStart2      db  "Errores conocidos: cadena con elementos repetidos, elemento invalido con espacio de 4to char.",10,0
-    textStart3      db  "El unico input que esta validado es el de las 6 cadenas del principio.",10,0
-    textStart4      db  "Para pasar a la siguiente cadena, ingresar el elemento doble espacio.",10,0
+    textErrorB      db  "Elemento Invalido, vuelva a ingresar",10,0
+    textErrorNum    db  "Alguna de las entradas es invalida, vuelva a ingresar",10,0
+    textStart       db  "En el caso de haber un elemento de 1 char, usar espacio como 2do char",10,0
+    textStart2      db  "Errores conocidos: cadena con elementos repetidos, elemento invalido con espacio de 4to char",10,0
+    textStart3      db  "El unico input que esta validado es el de las 6 cadenas del principio",10,0
+    textStart4      db  "Para pasar a la siguiente cadena, ingresar el elemento doble espacio",10,0
     textInput1      db  "Ingrese la primera cadena a analizar: ",10,0
     textInput2      db  "Ingrese la segunda cadena a analizar, para salir ingrese el mismo numero que en la primera: ",10,0
     textSearch      db  "Ingrese un elemento a buscar, para salir ingrese el elemento doble espacio: ",10,0
@@ -19,8 +21,7 @@ section     .data
     textSearch2     db  "El elemento [%c%c] se encuentra en la cadena %lli",10,0
     textUnion       db  "La union de las cadenas %lli y %lli es: ",10,0 
     textInvalido    db  "Alguna de las cadenas ingresadas es invalida, vuelvalo a intentar",10,0
-    textInputB      db  "Ingrese el elemento %lli de la cadena %lli: ",0
-    textErrorB      db  "Elemento Invalido, vuelva a ingresar",10,0
+    textInputB      db  "Ingrese el elemento %lli de la cadena %lli: ",0 
     cadena          times 252 db  " ";6*(21*2) 
     placeholder     db " "
     elementoquit    dw "  "
@@ -213,13 +214,28 @@ input2:
     call gets
     add rsp,32
     ;perdon por lo que estas a punto de presenciar
-    mov rax,[numeroArray2]
-    add rax,-48
-    mov [numeroArray2],rax
+    mov rbx,[numeroArray2]
+    add rbx,-48
+    mov [numeroArray2],rbx
     mov rax,[numeroArray1]
     add rax,-48
     mov [numeroArray1],rax
     ;perdon por lo que acabas de presenciar
+    
+    cmp rax,6
+    jge input2error
+    cmp rbx,6
+    jge input2error
+    cmp rax,0
+    jl input2error
+    cmp rbx,0
+    jl input2error
+    jmp input2end
+    input2error:
+    call ErrorNumMsg
+    jmp input2
+
+    input2end:
     ret
 
 input3:
@@ -227,12 +243,38 @@ input3:
     sub rsp,32
     call printf
     add rsp,32
+
+    input3loop:
+
+    call resetInputB
     
-    mov rcx,elementoAux2
+    mov rcx,elementoAux3
     sub rsp,32
     call gets
     add rsp,32
+    
+    mov rcx,2
+    mov rsi,elementoAux3
+    mov rdi,elementoquit
+    repe cmpsb
+    je input3end
+    
+    call validadorB
 
+    cmp byte[check],'N'
+    jne input3end
+
+    call ErrorMsg
+    jmp input3loop
+
+    input3end:
+
+    mov rcx,2
+    mov rsi,elementoAux3
+    mov rdi,elementoAux2
+    rep movsb
+    
+    
     ret
 
 Analizar:
@@ -547,13 +589,12 @@ inputB:
     mov byte[endCadenacheck],'N'
 
     call validadorB
+
     cmp byte[check],'N'
     jne inputBend
     
-    mov rcx,textErrorB
-    sub rsp,32
-    call printf
-    add rsp,32
+    call ErrorMsg
+
     jmp inputB
     inputBend:
     
@@ -619,3 +660,18 @@ resetInputB:
     mov rdi,elementoAux3
     mov rsi,cadenaRelleno
     rep movsb
+    ret
+
+ErrorMsg:
+    mov rcx,textErrorB
+    sub rsp,32
+    call printf
+    add rsp,32
+    ret
+    
+ErrorNumMsg:
+    mov rcx,textErrorNum
+    sub rsp,32
+    call printf
+    add rsp,32
+    ret
