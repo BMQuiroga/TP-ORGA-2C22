@@ -25,7 +25,7 @@ section     .data
     cadena          times 252 db  " ";6*(21*2) 
     placeholder     db " "
     elementoquit    dw "  "
-    space           db  " ",0
+    space           db " ",0
     cadenaRelleno   times 252 db  " "
 
 section     .bss
