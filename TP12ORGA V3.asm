@@ -6,18 +6,20 @@ extern	printf
 section     .data
     textLineJump    db  "",10,0
     cadenaValida    db  " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";37
-    textStart       db  "Las cadenas se inputean con todos los elementos sin separacion, en el caso de haber un elemento de 1 char, usar espacio como 2do char",10,0
-    textCadena      db  "Ingrese la cadena numero %lli: ",10,0
+    textStart       db  "En el caso de haber un elemento de 1 char, usar espacio como 2do char.",10,0
+    textStart2      db  "Errores conocidos: cadena con elementos repetidos, elemento invalido con espacio de 4to char.",10,0
+    textStart3      db  "El unico input que esta validado es el de las 6 cadenas del principio.",10,0
+    textStart4      db  "Para pasar a la siguiente cadena, ingresar el elemento doble espacio.",10,0
     textInput1      db  "Ingrese la primera cadena a analizar: ",10,0
     textInput2      db  "Ingrese la segunda cadena a analizar, para salir ingrese el mismo numero que en la primera: ",10,0
-    textSearch      db  "Ingrese un elemento a buscar, para salir ingrese el elemento '  ' (doble espacio, sin comillas): ",10,0
+    textSearch      db  "Ingrese un elemento a buscar, para salir ingrese el elemento doble espacio: ",10,0
     textSize        db  "La cadena ingresada tiene %lli elementos",10,0
     textInclucion   db  "La cadena %lli incluye a la cadena %lli",10,0
     textIgualdad    db  "La cadenas %lli y %lli son iguales",10,0
     textSearch2     db  "El elemento [%c%c] se encuentra en la cadena %lli",10,0
     textUnion       db  "La union de las cadenas %lli y %lli es: ",10,0 
     textInvalido    db  "Alguna de las cadenas ingresadas es invalida, vuelvalo a intentar",10,0
-    textInputB      db  "Ingrese el elemento %lli de la cadena %lli, para salir ingrese el elemento '  ' (doble espacio, sin comillas): ",0
+    textInputB      db  "Ingrese el elemento %lli de la cadena %lli: ",0
     textErrorB      db  "Elemento Invalido, vuelva a ingresar",10,0
     cadena          times 252 db  " ";6*(21*2) 
     placeholder     db " "
@@ -50,18 +52,7 @@ main:
     call startMsg
 
     call input1B
-    
-    call validador;
-    cmp byte[check],'V';VALIDADOR DEJA EN AL UNA V de valido O UNA N
-    je maininput2
-    mov rcx,textInvalido
-    sub rsp,32
-    call printf
-    add rsp,32
-    call reescribir
-    mov rsi,0
-    jmp inicio
-    
+        
     maininput2:
     
     call input2
@@ -88,40 +79,6 @@ main:
     jmp maininput3
     
     mainsalir:
-    ret
- 
-inputA:
-    ;rdx numero de ciclo
-    ;rcx donde se deja la cadena
-    mov rdi,rcx
-    
-    mov rcx,textCadena
-    sub rsp,32
-    call printf
-    add rsp,32
-    
-    
-    mov rcx,rdi
-    
-    
-    sub rsp,32
-    call gets
-    add rsp,32
-    
-    ret
-    
-debug:
-    mov rdx,1
-    
-    call TamanoDeArray
-    
-    mov rdx,rax
-    mov rcx,textSize
-    
-    sub rsp,32
-    call printf
-    add rsp,32
-        
     ret
     
 elementoXDelArrayA:;devuelve el elemento
@@ -528,154 +485,25 @@ perteneceAlArray:
     perteneceAlArrayNo:
     ret
 
-validador:
-    mov byte[check],'N'
-    mov byte[check2],'S'
-
-    call validarChars
-    cmp byte[check2],'N'
-    je validadorEnd
-
-    call validarOverflowMultiple
-    cmp byte[check2],'N'
-    je validadorEnd
-
-    ;call validarRepeticion
-    ;cmp byte[check2],'N'
-    ;je validadorEnd
-
-    ;2 validaciones: que cada cadena tenga solo chars validos y que no se hallan ingresado de mas
-    mov byte[check],'V'
-    validadorEnd:
-    ret
-
-validarChars:
-    mov r15,0
-    mov rax,0
-    mov rcx,0
-    mov r8,cadena
-    validarCharsLoop:
-    mov byte[check2],'V'
-    mov al,[r8]
-    call validarCharIndividual
-    cmp byte[check2],'N'
-    jne validarCharsAbajo
-    inc r15;r15 es errores
-    validarCharsAbajo:
-    cmp r15,7
-    je validarCharsEnd
-    inc r8
-    inc rcx
-    cmp rcx,252
-    jne validarCharsLoop
-    validarCharsEnd:
-    cmp r15,6
-    ;que paso aca? originalmente la cantidad de errores permitidos era 0, pero los '0/000' (enter) no son validos, asi que la cantidad de chars
-    ;validos tiene que ser 6, ahora, si una cadena es mas larga de lo esperado, la cadena siguiente sobreescribe el enter de la cadena anterior
-    ;por lo que checkear que haya exactamente 6 chars invalidos checkea tanto chars validos como overflow
-    ;(cada cadena tiene 20 espacios para elementos y un espacio para el enter)
-    jne validarCharsEnd2
-    mov byte[check2],'V'
-    validarCharsEnd2:  
-    ret
-
-validarCharIndividual:
-    mov rbx,0
-    mov rdx,cadenaValida
-    validarCharIndividualLoop:
-    mov ah,[rdx]
-    cmp al,ah
-    je validarCharIndividualEnd
-    inc rbx
-    inc rdx
-    cmp rbx,37
-    jne validarCharIndividualLoop
-    mov byte[check2],'N'
-    validarCharIndividualEnd:
-    ret
-
-reescribir:;ponele
-    mov rsi,cadenaRelleno
-    mov rdi,cadena
-    mov rcx,252
-    rep movsb
-    ret
-
-validarOverflow:
-    mov byte[check2],'S'
-    mov rcx,cadena
-    add rcx,r12;251 para el 6
-    mov rdi,placeholder
-    mov rsi,rcx
-    mov rcx,1
-    repe cmpsb
-    ;por lo aclarado anteriormente, falta checkear que la ultima cadena no tenga overflow, se hace reservando un byte de mas despues de los 42
-    ;de c/cadena y checkear que sea un espacio
-    je validarOverflowEnd
-    mov byte[check2],'N'
-    validarOverflowEnd:
-    ret
-    
 startMsg:
     mov rcx,textStart
     sub rsp,32
     call printf
     add rsp,32
+    mov rcx,textStart2
+    sub rsp,32
+    call printf
+    add rsp,32
+    mov rcx,textStart3
+    sub rsp,32
+    call printf
+    add rsp,32
+    mov rcx,textStart4
+    sub rsp,32
+    call printf
+    add rsp,32
     ret
 
-validarOverflowMultiple:
-    ;explicar como se me escapa ese ultimo byte
-    mov r12,41
-    mov r13,0
-    validarOverflowMultipleLoop:
-    call validarOverflow
-    add r12,42
-    inc r13
-    cmp byte[check2],'N'
-    je validarOverflowMultipleError
-    cmp r13,6;Cantidad de cadenas
-    jne validarOverflowMultipleLoop
-    validarOverflowMultipleError:
-    ret
-
-validarRepeticion:
-    mov byte[check2],'S'
-    mov r12,0
-    validarRepeticionLoop:
-    call validarRepeticionCadena
-    inc r12
-    cmp r12,6
-    jne validarRepeticionLoop
-    ret
-
-validarRepeticionCadena:
-    mov r13,cadena
-    imul r13,r12,42
-    call validarRepeticionElemento
-
-
-
-
-validarRepeticionElemento:
-    ret
-
-
-
-input1A:
-    mov rsi,0
-    inicio:   
-    mov rdx,rsi
-    imul rdx,42
-    
-    add rdx,cadena
-    mov rcx, rdx
-    
-    mov rdx,rsi
-    call inputA
-    inc rsi
-    cmp rsi,5
-    jle inicio
-    ret
 
 input1B:
     mov r12,0;cadena
@@ -739,11 +567,6 @@ inputB:
     
     ret
 
-    ;imul rdi,r13,2
-    ;imul rsi,r12,42
-    ;add rdi,rsi
-    ;add rdi,cadena
-
 validadorB:
     mov byte[check],'V'
     ;no tocar r12,r13
@@ -755,13 +578,13 @@ validadorB:
     jne validadorBerror
 
     mov rdx,cadenaValida;primer char valido
-    add rdx,1
+    add rdx,1;le sumo uno pq el primer char de la cadena valida es el espacio, y el 1er char no puede ser espacio
     mov al,[elementoAux3]
     call validarCharIndividualB
     cmp byte[check2],'N'
     je validadorBerror
 
-    mov rdx,cadenaValida;primer char valido
+    mov rdx,cadenaValida;segundo char valido o espacio
     mov r14,elementoAux3
     inc r14
     mov al,[r14]
