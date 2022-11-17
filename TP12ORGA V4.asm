@@ -18,6 +18,7 @@ section     .data
     textInclucion   db  "La cadena %lli incluye a la cadena %lli",10,0
     textIgualdad    db  "La cadenas %lli y %lli son iguales",10,0
     textNoRelacion  db  "No hay relaciones de igualdad o inclusion entre las cadenas %lli y %lli",10,0
+    textNoAparicion db  "El elemento [%c%c] no aparece en ninguna cadena",10,0
     textSearch2     db  "El elemento [%c%c] se encuentra en la cadena %lli",10,0
     textUnion       db  "La union de las cadenas %lli y %lli es: ",10,0 
     textInvalido    db  "Alguna de las cadenas ingresadas es invalida, vuelvalo a intentar",10,0
@@ -371,7 +372,8 @@ InstanciasDeIgualdadFullb:
     mov qword[tamanoArray2],4
     ret
 
-BuscarElemento:;falta probar
+BuscarElemento:
+    mov r15,0
     mov r12,cadena
     mov r13,1;contador
     BuscarElementoLoop:
@@ -392,6 +394,21 @@ BuscarElemento:;falta probar
 
     cmp r13,127
     jne BuscarElementoLoop
+
+    cmp r15,0
+    jne BuscarElementoEnd
+
+    mov rcx,textNoAparicion
+    mov rdx,[elementoAux2]
+    mov r8,elementoAux2
+    inc r8
+    mov r8,[r8]
+    sub rsp,32
+    call printf
+    add rsp,32
+
+    BuscarElementoEnd:
+
     ret
     
 
@@ -425,6 +442,9 @@ printAparicionesElemento:;sin probar
     sub rsp,32
     call printf
     add rsp,32
+
+    inc r15
+
     ret
 
 printUnion:
