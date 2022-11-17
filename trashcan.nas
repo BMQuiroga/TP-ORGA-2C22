@@ -343,3 +343,41 @@ debug:
     add rsp,32
         
     ret
+
+
+printArray2:
+    mov r15,0;contador y marcador de numero de elemento
+    printArray2Loop:
+    
+    ;elementoXDelArrayA:;devuelve el elemento
+    ;rdx numero del elemento
+    ;rcx numero del array
+
+    mov rdx,r15
+    mov rcx,[numeroArray2]
+
+    call elementoXDelArrayA
+
+    mov rcx,[elementoAux1]
+
+    call perteneceAlArray
+
+    cmp byte[check],'S';COMO HACE EL RETURN,
+    je printArray2Repeat
+    
+    mov rcx,elementoAux1
+    sub rsp,32
+    call printf
+    add rsp,32
+
+    mov rcx,space
+    sub rsp,32
+    call printf
+    add rsp,32
+    
+    printArray2Repeat:
+
+    inc r15
+    cmp r15,[tamanoArray2]
+    jne printArray2Loop
+    ret

@@ -412,9 +412,12 @@ printUnion:
     add rsp,32
 
  
-
+    mov rcx,[numeroArray1]
+    mov r15,[tamanoArray1]
     call printArray1
-    call printArray2
+    mov rcx,[numeroArray2]
+    mov r15,[tamanoArray2]
+    call printArray1
     
     mov rcx,textLineJump
     sub rsp,32
@@ -433,7 +436,7 @@ printArray1:
     ;rcx numero del array
 
     mov rdx,rsi
-    mov rcx,[numeroArray1]
+    ;mov rcx,[numeroArray1]
 
     call elementoXDelArrayA
     
@@ -460,47 +463,10 @@ printArray1:
     ;printAray1Abajo:
     
     
-    cmp rsi,[tamanoArray1]
+    cmp rsi,r15
     jne printArray1Loop
     ret
 
-
-printArray2:
-    mov r15,0;contador y marcador de numero de elemento
-    printArray2Loop:
-    
-    ;elementoXDelArrayA:;devuelve el elemento
-    ;rdx numero del elemento
-    ;rcx numero del array
-
-    mov rdx,r15
-    mov rcx,[numeroArray2]
-
-    call elementoXDelArrayA
-
-    mov rcx,[elementoAux1]
-
-    call perteneceAlArray
-
-    cmp byte[check],'S';COMO HACE EL RETURN,
-    je printArray2Repeat
-    
-    mov rcx,elementoAux1
-    sub rsp,32
-    call printf
-    add rsp,32
-
-    mov rcx,space
-    sub rsp,32
-    call printf
-    add rsp,32
-    
-    printArray2Repeat:
-
-    inc r15
-    cmp r15,[tamanoArray2]
-    jne printArray2Loop
-    ret
 
 perteneceAlArray:
     mov byte[check],'N'
