@@ -412,10 +412,10 @@ printUnion:
     add rsp,32
 
  
-    mov rcx,[numeroArray1]
+    mov r14,[numeroArray1]
     mov r15,[tamanoArray1]
     call printArray1
-    mov rcx,[numeroArray2]
+    mov r14,[numeroArray2]
     mov r15,[tamanoArray2]
     call printArray1
     
@@ -426,6 +426,9 @@ printUnion:
     ret
 
 printArray1:
+    ;r14 numero de array, r15 tamano de array
+
+
     mov rsi,0;contador y marcador de numero de elemento
     ;mov rdi,98
     
@@ -436,7 +439,7 @@ printArray1:
     ;rcx numero del array
 
     mov rdx,rsi
-    ;mov rcx,[numeroArray1]
+    mov rcx,r14
 
     call elementoXDelArrayA
     
