@@ -17,6 +17,7 @@ section     .data
     textSize        db  "La cadena ingresada tiene %lli elementos",10,0
     textInclucion   db  "La cadena %lli incluye a la cadena %lli",10,0
     textIgualdad    db  "La cadenas %lli y %lli son iguales",10,0
+    textNoRelacion  db  "No hay relaciones de igualdad o inclusion entre las cadenas %lli y %lli",10,0
     textSearch2     db  "El elemento [%c%c] se encuentra en la cadena %lli",10,0
     textUnion       db  "La union de las cadenas %lli y %lli es: ",10,0 
     textInvalido    db  "Alguna de las cadenas ingresadas es invalida, vuelvalo a intentar",10,0
@@ -278,9 +279,24 @@ input3:
 
 Analizar:
     call InstanciasDeIgualdadFull
+
+    mov rsi,0
+
     call PrimeroIncluyeSegundo
     call SegundoIncluyePrimero
     call igualdad
+
+    cmp rsi,0
+    jne AnalizarAbajo
+
+    mov rcx,textNoRelacion
+    mov rdx,[numeroArray1]
+    mov r8,[numeroArray2]
+    sub rsp,32
+    call printf
+    add rsp,32
+
+    AnalizarAbajo:
     call printUnion
     ret
 
@@ -299,6 +315,9 @@ PrimeroIncluyeSegundo:
     sub rsp,32
     call printf
     add rsp,32
+
+    inc rsi
+
     PrimeroNoIncluyeSegundo:
     ret
 
@@ -317,6 +336,9 @@ SegundoIncluyePrimero:
     sub rsp,32
     call printf
     add rsp,32
+
+    inc rsi
+
     SegundoNoIncluyePrimero:
     ret
 
@@ -336,6 +358,8 @@ igualdad:
     sub rsp,32
     call printf
     add rsp,32
+
+    inc rsi
 
     noigualdad:
     ret
