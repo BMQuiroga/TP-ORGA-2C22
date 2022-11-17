@@ -64,7 +64,7 @@ main:
     cmp r8,r9
     je maininput3
     
-    call Analizar
+    call AnalizarB
     
     jmp maininput2
     
@@ -99,7 +99,6 @@ TamanoDeArray:;fu
     ;rdx numero del array
     ;r10 contador de elementos
     ;r8 puntero
-    ;al placeholder, elemento vacio
  
     mov r10,0
 
@@ -471,7 +470,8 @@ printUnion:
 
 printArray1:
     ;r14 numero de array, r15 tamano de array
-
+    cmp r15,0
+    je printArray1End
 
     mov rsi,0;contador y marcador de numero de elemento
     ;mov rdi,98
@@ -512,6 +512,9 @@ printArray1:
     
     cmp rsi,r15
     jne printArray1Loop
+    
+    printArray1End:
+    
     ret
 
 
@@ -683,3 +686,27 @@ ErrorNumMsg:
     call printf
     add rsp,32
     ret
+
+AnalizarB:
+    call InstanciasDeIgualdadFull
+
+    mov rsi,0
+
+    call PrimeroIncluyeSegundo
+    call SegundoIncluyePrimero
+    call igualdad
+
+    cmp rsi,0
+    jne AnalizarAbajo
+
+    mov rcx,textNoRelacion
+    mov rdx,[numeroArray1]
+    mov r8,[numeroArray2]
+    sub rsp,32
+    call printf
+    add rsp,32
+
+    AnalizarAbajoB:
+    ;call printUnion
+    ret
+    
