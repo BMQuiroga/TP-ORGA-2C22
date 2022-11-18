@@ -6,8 +6,10 @@ extern	printf
 section     .data
     textLineJump    db  "",10,0
     cadenaValida    db  " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";37
+    textMainMenu    db  "Lorem Ipsum",10,0
     textErrorB      db  "Elemento Invalido, vuelva a ingresar",10,0
     textErrorNum    db  "Alguna de las entradas es invalida, vuelva a ingresar",10,0
+    textErrorMenu   db  "Entrada Invalida, vuelva a ingresar",10,0
     textStart       db  "En el caso de haber un elemento de 1 char, usar espacio como 2do char",10,0
     textStart2      db  "Errores conocidos: cadena con elementos repetidos, elemento invalido con espacio de 4to char",10,0
     textStart4      db  "Para pasar a la siguiente cadena, ingresar el elemento doble espacio",10,0
@@ -42,6 +44,10 @@ section     .bss
     coincidencias   resq 1
     check           resb 1
     check2          resb 1
+    inputmainmenu   resb 1
+    inputSN         resb 1
+    quit            resb 1
+    checkinput      resb 1
     endCadenacheck  resb 1
 
 
@@ -709,4 +715,57 @@ AnalizarB:
     AnalizarAbajoB:
     ;call printUnion
     ret
-    
+
+ValidarInputSN:
+    mov byte[checkinput],'V'
+    cmp byte[inputSN],'S'
+    je ValidarInputSNEnd
+    cmp byte[inputSN],'N'
+    je ValidarInputSNEnd
+    mov byte[checkinput],'N'
+
+    ValidarInputSNEnd
+    ret
+
+ValidarInputMainMenu:
+    ret;usar sscanf en lo posible aca y en input2
+
+Menu:
+    mov rcx,textMainMenu
+    sub rsp,32
+    call printf
+    add rsp,32
+
+    MenuLoop:
+
+    mov rcx,inputmainmenu
+    sub rsp,32
+    call gets
+    add rsp,32
+
+    call ValidarInputMainMenu
+
+    cmp byte[checkinput],'N'
+    je MenuError
+
+    call DireccionadorMenu
+    cmp byte[quit],'Y'
+    je MenuEnd
+    jmp Menu
+
+    MenuError:
+    call errorMenuMsg
+    jmp MenuLoop
+
+    MenuEnd:
+    ret
+
+errorMenuMsg:
+    mov rcx,textErrorMenu
+    sub rsp,32
+    call printf
+    add rsp,32
+    ret
+
+DireccionadorMenu:
+    ret
