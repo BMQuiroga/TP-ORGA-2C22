@@ -7,6 +7,7 @@ section     .data
     textLineJump    db  "",10,0
     cadenaValida    db  " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";37
     textMainMenu    db  "Lorem Ipsum",10,0
+    textContinue    db  "Desea continuar (S/N)"
     textErrorB      db  "Elemento Invalido, vuelva a ingresar",10,0
     textErrorNum    db  "Alguna de las entradas es invalida, vuelva a ingresar",10,0
     textErrorMenu   db  "Entrada Invalida, vuelva a ingresar",10,0
@@ -44,7 +45,7 @@ section     .bss
     coincidencias   resq 1
     check           resb 1
     check2          resb 1
-    inputmainmenu   resb 1
+    inputmainmenu   resq 1
     inputSN         resb 1
     quit            resb 1
     checkinput      resb 1
@@ -728,9 +729,20 @@ ValidarInputSN:
     ret
 
 ValidarInputMainMenu:
-    ret;usar sscanf en lo posible aca y en input2
+    mov byte[checkinput],'N'
+    mov rbx,[inputmainmenu]
+    add rbx,-48
+    mov [inputmainmenu],rbx
+    cmp rbx,0
+    jl ValidarInputMainMenuEnd
+    cmp rbx,9
+    jg ValidarInputMainMenuEnd
+    mov byte[checkinput],'V'
+    ValidarInputMainMenuEnd:
+    ret
 
 Menu:
+    mov byte[quit],'N'
     mov rcx,textMainMenu
     sub rsp,32
     call printf
@@ -767,5 +779,66 @@ errorMenuMsg:
     add rsp,32
     ret
 
-DireccionadorMenu:
+DireccionadorMenu: 
+    cmp rbx,6
+    jl DMEscribirCadena
+    je DMPertenenciaElemento
+    cmp rbx,7
+    je DMIgualdadInclusion
+    cmp rbx,8
+    je DMUnion
+    jmp DMQuit
+
+    DMEscribirCadena:
+    call EscribirCadena:
+    jmp DMEnd
+    DMPertenenciaElemento:
+    call PertenenciaElemento
+    jmp DMEnd
+    DMIgualdadInclusion:
+    call IgualdadInclusion
+    jmp DMEnd
+    DMUnion:
+    call Union
+    ret
+    DMQuit:
+    mov byte[quit],'Y'
+    DMEnd:
+    ret
+
+PertenenciaElemento:
+    ret
+
+IgualdadInclusion:
+    ret
+
+Union:
+    ret
+
+EscribirCadena:
+    ret
+
+InputContinue:
+    mov rcx,textContinue
+    sub rsp,32
+    call printf
+    add rsp,32
+
+    InputContinueLoop:
+
+    mov rcx,inputSN
+    sub rsp,32
+    call gets
+    add rsp,32
+
+    call ValidarInputSN
+
+    cmp byte[checkinput],'N'
+    jne InputContinueEnd:
+
+    call errorMenuMsg
+    jmp InputContinueLoop
+
+
+    InputContinueEnd:
     ret
