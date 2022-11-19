@@ -7,28 +7,26 @@ section     .data
     textLineJump    db  "",10,0
     cadenaValida    db  " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";37
     textMainMenu    db  "Lorem Ipsum",10,0
-    textContinue    db  "Desea continuar (S/N)"
+    ;textMainMenu    db  "0- Ingresar la cadena 0,10,"1- Ingresar la cadena 1,"10,"2- Ingresar la cadena 2,"10,"3- Ingresar la cadena 3,"10,"4- Ingresar la cadena 4,"10,"5- Ingresar la cadena 5,"10,"6- Evaluar la existencia de un elemento,"10,"7- Evaluar relaciones de Igualdad e Inclusion entre cadenas,"10,"8- Union de cadenas,"10,"9- Salir",10,0
+    textContinue    db  "Desea continuar? (S/N): ",0
     textErrorB      db  "Elemento Invalido, vuelva a ingresar",10,0
     textErrorNum    db  "Alguna de las entradas es invalida, vuelva a ingresar",10,0
     textErrorMenu   db  "Entrada Invalida, vuelva a ingresar",10,0
     textStart       db  "En el caso de haber un elemento de 1 char, usar espacio como 2do char",10,0
     textStart2      db  "Errores conocidos: cadena con elementos repetidos, elemento invalido con espacio de 4to char",10,0
-    textStart4      db  "Para pasar a la siguiente cadena, ingresar el elemento doble espacio",10,0
     textInput1      db  "Ingrese la primera cadena a analizar: ",10,0
     textInput2      db  "Ingrese la segunda cadena a analizar, para salir ingrese el mismo numero que en la primera: ",10,0
-    textSearch      db  "Ingrese un elemento a buscar, para salir ingrese el elemento doble espacio: ",10,0
-    textSize        db  "La cadena ingresada tiene %lli elementos",10,0
+    textSearch      db  "Ingrese un elemento a buscar: ",0
+    textSize        db  "La cadena ingresada tiene %lli elementos",10,0;DIOS SABE HACE CUANTO ESTA ESTO ACA
     textInclucion   db  "La cadena %lli incluye a la cadena %lli",10,0
     textIgualdad    db  "La cadenas %lli y %lli son iguales",10,0
     textNoRelacion  db  "No hay relaciones de igualdad o inclusion entre las cadenas %lli y %lli",10,0
     textNoAparicion db  "El elemento [%c%c] no aparece en ninguna cadena",10,0
     textSearch2     db  "El elemento [%c%c] se encuentra en la cadena %lli",10,0
     textUnion       db  "La union de las cadenas %lli y %lli es: ",10,0 
-    textInvalido    db  "Alguna de las cadenas ingresadas es invalida, vuelvalo a intentar",10,0
     textInputB      db  "Ingrese el elemento %lli de la cadena %lli: ",0 
     cadena          times 252 db  " ";6*(21*2)
     placeholder     db " "
-    elementoquit    dw "  "
     space           db " ",0
     cadenaRelleno   times 252 db  " "
 
@@ -37,7 +35,7 @@ section     .bss
     
     elementoAux1    resw 1;la func elementoXdelArrayA devuelve el resultado aca, tambien es usado por printArray2
     elementoAux2    resw 1;aca va el elemento de input
-    elementoAux3    resd 1;usado por el input1B
+    elementoAux3    resd 1;usado por el input1C
     tamanoArray1    resq 1
     tamanoArray2    resq 1
     numeroArray1    resq 1
@@ -57,37 +55,9 @@ section     .bss
 section     .text
 main:
     mov rbp, rsp; for correct debugging
-    
+    mov byte[quit],'N'
     call startMsg
-
-    call input1B
-        
-    maininput2:
-    
-    call input2
-    
-    mov r8,[numeroArray1]
-    mov r9,[numeroArray2]
-    cmp r8,r9
-    je maininput3
-    
-    call AnalizarB
-    
-    jmp maininput2
-    
-    maininput3:
-
-    call input3
-    
-    mov r8w,[elementoAux2]
-    cmp r8w,[elementoquit]
-    je mainsalir
-    
-    call BuscarElemento
-    
-    jmp maininput3
-    
-    mainsalir:
+    call Menu
     ret
     
 elementoXDelArrayA:;devuelve el elemento
@@ -260,11 +230,11 @@ input3:
     call gets
     add rsp,32
     
-    mov rcx,2
-    mov rsi,elementoAux3
-    mov rdi,elementoquit
-    repe cmpsb
-    je input3end
+    ;mov rcx,2
+    ;mov rsi,elementoAux3
+    ;mov rdi,elementoquit
+    ;repe cmpsb
+    ;je input3endREMOVIDOS YA QUE EL ELEMENTOQUIT NO SE USA PARA SALIR Y ES INVALIDO
     
     call validadorB
 
@@ -558,63 +528,52 @@ startMsg:
     sub rsp,32
     call printf
     add rsp,32
-    mov rcx,textStart4
-    sub rsp,32
-    call printf
-    add rsp,32
     ret
 
 
-input1B:
-    mov r12,0;cadena
+
+input1C:;borrar input1B
+    mov r12,rbx;cadena
     mov r13,0;elemento
-    inicioinput1B:
-    call inputB
-    cmp byte[endCadenacheck],'E'
-    je input1Bendcadena
+    inicioinput1C:
+    call inputC
+    call InputContinue
+    cmp byte[inputSN],'N'
+    je input1Cend
     inc r13
     cmp r13,20
-    jne inicioinput1B
+    jne inicioinput1C
 
-    input1Bendcadena:
-    mov r13,0
-    inc r12
-    cmp r12,6
-    jne inicioinput1B
+    input1Cend:
     ret
 
-inputB:
-    mov byte[endCadenacheck],'E'
+
+
+inputC:;borrar inputb
+    cmp byte[inputSN],'S'
     mov rcx,textInputB
     mov rdx,r13
     mov r8,r12
     sub rsp,32
     call printf
     add rsp,32
-    
+
     call resetInputB
-    
+
     mov rcx,elementoAux3
     sub rsp,32
     call gets
     add rsp,32
 
-    mov rcx,2
-    mov rsi,elementoAux3
-    mov rdi,elementoquit
-    repe cmpsb
-    je inputBend
-    mov byte[endCadenacheck],'N'
-
     call validadorB
 
     cmp byte[check],'N'
-    jne inputBend
+    jne inputCend
     
     call ErrorMsg
+    jmp inputC
 
-    jmp inputB
-    inputBend:
+    inputCend:
     
     mov rsi,elementoAux3
     mov rcx,2
@@ -625,6 +584,7 @@ inputB:
     rep movsb
     
     ret
+
 
 validadorB:
     mov byte[check],'V'
@@ -694,28 +654,6 @@ ErrorNumMsg:
     add rsp,32
     ret
 
-AnalizarB:
-    call InstanciasDeIgualdadFull
-
-    mov rsi,0
-
-    call PrimeroIncluyeSegundo
-    call SegundoIncluyePrimero
-    call igualdad
-
-    cmp rsi,0
-    jne AnalizarAbajo
-
-    mov rcx,textNoRelacion
-    mov rdx,[numeroArray1]
-    mov r8,[numeroArray2]
-    sub rsp,32
-    call printf
-    add rsp,32
-
-    AnalizarAbajoB:
-    ;call printUnion
-    ret
 
 ValidarInputSN:
     mov byte[checkinput],'V'
@@ -725,7 +663,7 @@ ValidarInputSN:
     je ValidarInputSNEnd
     mov byte[checkinput],'N'
 
-    ValidarInputSNEnd
+    ValidarInputSNEnd:
     ret
 
 ValidarInputMainMenu:
@@ -742,7 +680,6 @@ ValidarInputMainMenu:
     ret
 
 Menu:
-    mov byte[quit],'N'
     mov rcx,textMainMenu
     sub rsp,32
     call printf
@@ -790,7 +727,7 @@ DireccionadorMenu:
     jmp DMQuit
 
     DMEscribirCadena:
-    call EscribirCadena:
+    call EscribirCadena
     jmp DMEnd
     DMPertenenciaElemento:
     call PertenenciaElemento
@@ -807,15 +744,23 @@ DireccionadorMenu:
     ret
 
 PertenenciaElemento:
+    call input3
+    call BuscarElemento
     ret
 
 IgualdadInclusion:
+    call input2
+    call Analizar2
     ret
 
 Union:
+    call input2
+    call printUnion
     ret
 
 EscribirCadena:
+    ;rbx tiene el numero del input que coincide con el numero de la cadena a escribir
+    call input1C
     ret
 
 InputContinue:
@@ -834,11 +779,31 @@ InputContinue:
     call ValidarInputSN
 
     cmp byte[checkinput],'N'
-    jne InputContinueEnd:
+    jne InputContinueEnd
 
     call errorMenuMsg
     jmp InputContinueLoop
 
-
     InputContinueEnd:
+    ret
+
+Analizar2:
+    call InstanciasDeIgualdadFull
+
+    mov rsi,0
+
+    call PrimeroIncluyeSegundo
+    call SegundoIncluyePrimero
+    call igualdad
+
+    cmp rsi,0
+    jne AnalizarAbajo2
+
+    mov rcx,textNoRelacion
+    mov rdx,[numeroArray1]
+    mov r8,[numeroArray2]
+    sub rsp,32
+    call printf
+    add rsp,32
+    AnalizarAbajo2:
     ret

@@ -381,3 +381,104 @@ printArray2:
     cmp r15,[tamanoArray2]
     jne printArray2Loop
     ret
+
+main:
+    mov rbp, rsp; for correct debugging
+    
+    call startMsg
+
+    call input1B
+        
+    maininput2:
+    
+    call input2
+    
+    mov r8,[numeroArray1]
+    mov r9,[numeroArray2]
+    cmp r8,r9
+    je maininput3
+    
+    call Analizar
+    
+    jmp maininput2
+    
+    maininput3:
+
+    call input3
+    
+    mov r8w,[elementoAux2]
+    cmp r8w,[elementoquit]
+    je mainsalir
+    
+    call BuscarElemento
+    
+    jmp maininput3
+    
+    mainsalir:
+    ret
+
+inputB:
+    mov byte[endCadenacheck],'E'
+    mov rcx,textInputB
+    mov rdx,r13;ELEMENTO
+    mov r8,r12;CADENA
+    sub rsp,32
+    call printf
+    add rsp,32
+    
+    call resetInputB
+    
+    mov rcx,elementoAux3
+    sub rsp,32
+    call gets
+    add rsp,32
+
+    mov rcx,2
+    mov rsi,elementoAux3
+    mov rdi,elementoquit
+    repe cmpsb
+    je inputBend
+    mov byte[endCadenacheck],'N'
+
+    call validadorB
+
+    cmp byte[check],'N'
+    jne inputBend
+    
+    call ErrorMsg
+
+    jmp inputB
+    inputBend:
+    
+    mov rsi,elementoAux3
+    mov rcx,2
+    imul rdi,r12,42
+    imul r8,r13,2
+    add rdi,r8
+    add rdi,cadena
+    rep movsb
+    
+    ret
+
+    
+input1B:
+    mov r12,0;cadena
+    mov r13,0;elemento
+    inicioinput1B:
+    call inputB
+    cmp byte[endCadenacheck],'E'
+    je input1Bendcadena
+    inc r13
+    cmp r13,20
+    jne inicioinput1B
+
+    input1Bendcadena:
+    mov r13,0
+    inc r12
+    cmp r12,6
+    jne inicioinput1B
+    ret
+
+textSearch      db  "Ingrese un elemento a buscar, para salir ingrese el elemento doble espacio: ",10,0
+textStart4      db  "Para pasar a la siguiente cadena, ingresar el elemento doble espacio",10,0
+elementoquit    dw "  "
