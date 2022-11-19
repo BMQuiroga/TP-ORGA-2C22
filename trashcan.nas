@@ -482,3 +482,11 @@ input1B:
 textSearch      db  "Ingrese un elemento a buscar, para salir ingrese el elemento doble espacio: ",10,0
 textStart4      db  "Para pasar a la siguiente cadena, ingresar el elemento doble espacio",10,0
 elementoquit    dw "  "
+
+
+
+InstanciasDeIgualdadFullb:
+    mov qword[coincidencias],3
+    mov qword[tamanoArray1],3
+    mov qword[tamanoArray2],4
+    ret

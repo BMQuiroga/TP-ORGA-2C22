@@ -29,6 +29,7 @@ section     .data
     placeholder     db " "
     space           db " ",0
     cadenaRelleno   times 252 db  " "
+    cadenaRelleno2  times 21 dq -1
 
 section     .bss
     ;cadena1     resw 100
@@ -49,9 +50,8 @@ section     .bss
     quit            resb 1
     checkinput      resb 1
     endCadenacheck  resb 1
-
-
-    
+    arrayMagico     resq 21
+    tamanoArrayMagico   resq 1
 
 section     .text
 main:
@@ -109,7 +109,7 @@ TamanoDeArray:;fu
     ret
 
 InstanciasDeIgualdadFull:
-    ;rcx no se usa
+    ;no se usan: rax, rbx, r15
     ;rbp numero de array 1 
     ;rdx numero de array 2, se lo pasa a rsi temporalmente para usar rdx de parametro a TamanoDeArray, y se lo devuelve dsp 
     ;r8 direccion de array 1
@@ -120,15 +120,8 @@ InstanciasDeIgualdadFull:
     ;r13 puntero 1
     ;r14 puntero 2
     ;rsi,rdi,rcx se usan para el compsb
-    mov rbp,[numeroArray1]
-    mov rdx,rbp
-    call TamanoDeArray
-    mov [tamanoArray1],rax
-    
-    mov rsi,[numeroArray2]
-    mov rdx,rsi
-    call TamanoDeArray
-    mov [tamanoArray2],rax
+    call CalcularTamanos
+    call ResetArrayMagico
 
     mov rdx,[numeroArray2] ;numero array 2 queda en rdx
 
@@ -143,29 +136,41 @@ InstanciasDeIgualdadFull:
 
     mov r13,r8
     mov r14,r9
-    Loop1:
+    IDIFLoop1:
 
     mov rcx,2
     mov rsi,r13
     mov rdi,r14
     repe cmpsb
-    jne abajo
+
+    jne IDIFabajo
+    
+    mov rbx,r10
+    call PALAM
+    cmp byte[check],'Y'
+    je IDIFabajo
+
+    call AddArrayMagico
     inc r12
-    abajo:
+    jmp IDIFendcadena
+
+    IDIFabajo:
 
     add r13,2
     inc r10
 
     cmp r10,[tamanoArray1]
-    jl Loop1
-
+    jl IDIFLoop1
+    
+    IDIFendcadena:
+    
     add r14,2
     mov r13,r8
     inc r11
     mov r10,0
 
     cmp r11,[tamanoArray2]
-    jl Loop1
+    jl IDIFLoop1
 
     mov [coincidencias],r12
     ret
@@ -342,12 +347,6 @@ igualdad:
     noigualdad:
     ret
 
-
-InstanciasDeIgualdadFullb:
-    mov qword[coincidencias],3
-    mov qword[tamanoArray1],3
-    mov qword[tamanoArray2],4
-    ret
 
 BuscarElemento:
     mov r15,0
@@ -757,12 +756,12 @@ IgualdadInclusion:
 
 Union:
     call input2
-    call InstanciasDeIgualdadFull
+    call CalcularTamanos
     call printUnion
     ret
 
 EscribirCadena:
-    ;rbx tiene el numero del input que coincide con el numero de la cadena a escribir
+    ;rbx tiene el numero del input que coincide con el numero de la cadena a escribir 200IQ Plays
     call input1C
     ret
 
@@ -820,4 +819,55 @@ ResetCadena:
     mov rsi,cadenaRelleno
     rep movsb
     pop rbx
+    ret
+
+
+CalcularTamanos:
+    mov rbp,[numeroArray1]
+    mov rdx,rbp
+    call TamanoDeArray
+    mov [tamanoArray1],rax
+    
+    mov rsi,[numeroArray2]
+    mov rdx,rsi
+    call TamanoDeArray
+    mov [tamanoArray2],rax
+    ret
+
+
+PALAM:;Pertenece al array magico
+    ;se pueden usar rax, rbx, r15
+    ;el numero entra en rbx
+    mov byte[check],'N'
+    mov rax,arrayMagico
+    mov r15,-1
+    PALAMLoop:
+    cmp rbx,[rax];MAL
+    je PALAMerror
+    cmp r15,[rax];MAL
+    je PALAMend
+    add rax,4
+    jmp PALAMLoop
+    PALAMerror:
+    mov byte[check],'Y'
+    PALAMend:
+    ret
+
+ResetArrayMagico:
+    mov qword[tamanoArrayMagico],0
+    mov rcx,168
+    mov rsi,cadenaRelleno2
+    mov rdi,arrayMagico
+    rep movsb
+    ret
+
+AddArrayMagico:
+    ;se pueden usar rax, rbx, r15
+    ;el numero entra en rbx
+    mov rax,arrayMagico
+    mov r15,[tamanoArrayMagico]
+    add rax,r15
+    mov qword[rax],rbx;MAL
+    inc r15
+    mov qword[tamanoArrayMagico],r15
     ret
