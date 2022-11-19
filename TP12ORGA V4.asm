@@ -34,6 +34,7 @@ section     .bss
     ;cadena1     resw 100
     
     elementoAux1    resw 1;la func elementoXdelArrayA devuelve el resultado aca, tambien es usado por printArray2
+    exp1            resq 1;sin esto printf me agarra el elementoaux2 y 3 si estan escritos
     elementoAux2    resw 1;aca va el elemento de input
     elementoAux3    resd 1;usado por el input1C
     tamanoArray1    resq 1
@@ -533,6 +534,7 @@ startMsg:
 
 
 input1C:;borrar input1B
+    call ResetCadena
     mov r12,rbx;cadena
     mov r13,0;elemento
     inicioinput1C:
@@ -755,6 +757,7 @@ IgualdadInclusion:
 
 Union:
     call input2
+    call InstanciasDeIgualdadFull
     call printUnion
     ret
 
@@ -806,4 +809,15 @@ Analizar2:
     call printf
     add rsp,32
     AnalizarAbajo2:
+    ret
+
+ResetCadena:
+    ;rbx numero de cadena
+    mov rcx,42
+    imul rdi,rbx,42
+    push rbx
+    add rdi,cadena
+    mov rsi,cadenaRelleno
+    rep movsb
+    pop rbx
     ret
