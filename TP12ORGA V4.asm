@@ -6,16 +6,14 @@ extern	printf
 section     .data
     textLineJump    db  "",10,0
     cadenaValida    db  " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";37
-    textMainMenu    db  "Lorem Ipsum",10,0
-    ;textMainMenu    db  "0- Ingresar la cadena 0,10,"1- Ingresar la cadena 1,"10,"2- Ingresar la cadena 2,"10,"3- Ingresar la cadena 3,"10,"4- Ingresar la cadena 4,"10,"5- Ingresar la cadena 5,"10,"6- Evaluar la existencia de un elemento,"10,"7- Evaluar relaciones de Igualdad e Inclusion entre cadenas,"10,"8- Union de cadenas,"10,"9- Salir",10,0
+    textMainMenu    db  "0- Ingresar la cadena 0",10,"1- Ingresar la cadena 1",10,"2- Ingresar la cadena 2",10,"3- Ingresar la cadena 3",10,"4- Ingresar la cadena 4",10,"5- Ingresar la cadena 5",10,"6- Evaluar la existencia de un elemento",10,"7- Evaluar relaciones de Igualdad e Inclusion entre cadenas",10,"8- Union de cadenas",10,"9- Salir",10,0
     textContinue    db  "Desea continuar? (S/N): ",0
     textErrorB      db  "Elemento Invalido, vuelva a ingresar",10,0
     textErrorNum    db  "Alguna de las entradas es invalida, vuelva a ingresar",10,0
     textErrorMenu   db  "Entrada Invalida, vuelva a ingresar",10,0
     textStart       db  "En el caso de haber un elemento de 1 char, usar espacio como 2do char",10,0
-    textStart2      db  "Errores conocidos: cadena con elementos repetidos, elemento invalido con espacio de 4to char",10,0
-    textInput1      db  "Ingrese la primera cadena a analizar: ",10,0
-    textInput2      db  "Ingrese la segunda cadena a analizar, para salir ingrese el mismo numero que en la primera: ",10,0
+    textInput1      db  "Ingrese la primera cadena: ",0
+    textInput2      db  "Ingrese la segunda cadena: ",0
     textSearch      db  "Ingrese un elemento a buscar: ",0
     textSize        db  "La cadena ingresada tiene %lli elementos",10,0;DIOS SABE HACE CUANTO ESTA ESTO ACA
     textInclucion   db  "La cadena %lli incluye a la cadena %lli",10,0
@@ -34,7 +32,7 @@ section     .data
 section     .bss
     ;cadena1     resw 100
     
-    elementoAux1    resw 1;la func elementoXdelArrayA devuelve el resultado aca, tambien es usado por printArray2
+    elementoAux1    resw 1;la func elementoXdelArrayA devuelve el resultado aca, tambien es usado por printArray
     exp1            resq 1;sin esto printf me agarra el elementoaux2 y 3 si estan escritos
     elementoAux2    resw 1;aca va el elemento de input
     elementoAux3    resd 1;usado por el input1C
@@ -49,7 +47,6 @@ section     .bss
     inputSN         resb 1
     quit            resb 1
     checkinput      resb 1
-    endCadenacheck  resb 1
     arrayMagico     resq 21
     tamanoArrayMagico   resq 1
 
@@ -59,7 +56,7 @@ main:
     mov byte[quit],'N'
     call startMsg
     call Menu
-    call PrintCoincidenciasDebug
+    ;call PrintCoincidenciasDebug
     ret
     
 elementoXDelArrayA:;devuelve el elemento
@@ -495,37 +492,8 @@ printArray1:
     
     ret
 
-
-perteneceAlArray:
-    mov byte[check],'N'
-    ;no puede modificar r15
-    mov r13,[numeroArray1]
-    imul r13,[numeroArray1],42
-    add r13,cadena
-    mov r14,0;contador
-    perteneceAlArrayStart:
-    mov rcx,2
-    mov rsi,r13
-    mov rdi,elementoAux1
-    repe cmpsb
-    je perteneceAlArraySi
-    add r14,1
-    add r13,2
-    cmp r14,[tamanoArray1]
-    je perteneceAlArrayNo
-    jmp perteneceAlArrayStart
-
-    perteneceAlArraySi:
-    mov byte[check],'S'
-    perteneceAlArrayNo:
-    ret
-
 startMsg:
     mov rcx,textStart
-    sub rsp,32
-    call printf
-    add rsp,32
-    mov rcx,textStart2
     sub rsp,32
     call printf
     add rsp,32
@@ -843,9 +811,9 @@ PALAM:;Pertenece al array magico
     mov rax,arrayMagico
     mov r15,-1
     PALAMLoop:
-    cmp rbx,[rax];MAL
+    cmp rbx,[rax]
     je PALAMerror
-    cmp r15,[rax];MAL
+    cmp r15,[rax]
     je PALAMend
     add rax,8
     jmp PALAMLoop
@@ -868,7 +836,7 @@ AddArrayMagico:
     mov r15,[tamanoArrayMagico]    
     imul rax,r15,8
     add rax,arrayMagico
-    mov [rax],rbx;MAL
+    mov [rax],rbx
     inc r15
     mov qword[tamanoArrayMagico],r15
     ret

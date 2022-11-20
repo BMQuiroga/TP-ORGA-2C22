@@ -490,3 +490,27 @@ InstanciasDeIgualdadFullb:
     mov qword[tamanoArray1],3
     mov qword[tamanoArray2],4
     ret
+
+perteneceAlArray:
+    mov byte[check],'N'
+    ;no puede modificar r15
+    mov r13,[numeroArray1]
+    imul r13,[numeroArray1],42
+    add r13,cadena
+    mov r14,0;contador
+    perteneceAlArrayStart:
+    mov rcx,2
+    mov rsi,r13
+    mov rdi,elementoAux1
+    repe cmpsb
+    je perteneceAlArraySi
+    add r14,1
+    add r13,2
+    cmp r14,[tamanoArray1]
+    je perteneceAlArrayNo
+    jmp perteneceAlArrayStart
+
+    perteneceAlArraySi:
+    mov byte[check],'S'
+    perteneceAlArrayNo:
+    ret
