@@ -59,6 +59,7 @@ main:
     mov byte[quit],'N'
     call startMsg
     call Menu
+    call PrintCoincidenciasDebug
     ret
     
 elementoXDelArrayA:;devuelve el elemento
@@ -290,7 +291,7 @@ PrimeroIncluyeSegundo:
     cmp rax,rbx
     jle PrimeroNoIncluyeSegundo;1 tiene que ser mayor en tamaño
     cmp rcx,rbx
-    jl PrimeroNoIncluyeSegundo;1 y 2 comparten todos los elementos de 2
+    jne PrimeroNoIncluyeSegundo;1 y 2 comparten todos los elementos de 2
 
     mov rcx,textInclucion 
     mov rdx,[numeroArray1]
@@ -311,7 +312,7 @@ SegundoIncluyePrimero:
     cmp rbx,rax
     jle SegundoNoIncluyePrimero;2 tiene que ser mayor en tamaño
     cmp rcx,rax
-    jl SegundoNoIncluyePrimero;1 y 2 comparten todos los elementos de 1
+    jne SegundoNoIncluyePrimero;1 y 2 comparten todos los elementos de 1
 
     mov rcx,textInclucion;305 Y 323 ERAN JNE, version 1.1 entrega
     mov rdx,[numeroArray2]
@@ -846,7 +847,7 @@ PALAM:;Pertenece al array magico
     je PALAMerror
     cmp r15,[rax];MAL
     je PALAMend
-    add rax,4
+    add rax,8
     jmp PALAMLoop
     PALAMerror:
     mov byte[check],'Y'
@@ -864,10 +865,18 @@ ResetArrayMagico:
 AddArrayMagico:
     ;se pueden usar rax, rbx, r15
     ;el numero entra en rbx
-    mov rax,arrayMagico
-    mov r15,[tamanoArrayMagico]
-    add rax,r15
-    mov qword[rax],rbx;MAL
+    mov r15,[tamanoArrayMagico]    
+    imul rax,r15,8
+    add rax,arrayMagico
+    mov [rax],rbx;MAL
     inc r15
     mov qword[tamanoArrayMagico],r15
+    ret
+
+PrintCoincidenciasDebug:
+    mov rcx,textSize
+    mov rdx,[coincidencias]
+    sub rsp,32
+    call printf
+    add rsp,32
     ret
