@@ -6,7 +6,7 @@ extern	printf
 section     .data
     textLineJump    db  "",10,0
     cadenaValida    db  " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";37
-    textMainMenu    db  "0- Ingresar la cadena 0",10,"1- Ingresar la cadena 1",10,"2- Ingresar la cadena 2",10,"3- Ingresar la cadena 3",10,"4- Ingresar la cadena 4",10,"5- Ingresar la cadena 5",10,"6- Evaluar la existencia de un elemento",10,"7- Evaluar relaciones de Igualdad e Inclusion entre cadenas",10,"8- Union de cadenas",10,"9- Salir",10,0
+    textMainMenu    db  "-----Menu principal-----",10,"0- Ingresar la cadena 0",10,"1- Ingresar la cadena 1",10,"2- Ingresar la cadena 2",10,"3- Ingresar la cadena 3",10,"4- Ingresar la cadena 4",10,"5- Ingresar la cadena 5",10,"6- Evaluar la existencia de un elemento",10,"7- Evaluar relaciones de Igualdad e Inclusion entre cadenas",10,"8- Union de cadenas",10,"9- Salir",10,0
     textContinue    db  "Desea continuar? (S/N): ",0
     textErrorB      db  "Elemento Invalido, vuelva a ingresar",10,0
     textErrorNum    db  "Alguna de las entradas es invalida, vuelva a ingresar",10,0
@@ -54,7 +54,6 @@ section     .text
 main:
     mov rbp, rsp; for correct debugging
     mov byte[quit],'N'
-    call startMsg
     call Menu
     ;call PrintCoincidenciasDebug
     ret
@@ -731,7 +730,8 @@ Union:
     ret
 
 EscribirCadena:
-    ;rbx tiene el numero del input que coincide con el numero de la cadena a escribir 200IQ Plays
+    ;rbx tiene el numero del input que coincide con el numero de la cadena a escribir 200IQ
+    call startMsg
     call input1C
     ret
 
