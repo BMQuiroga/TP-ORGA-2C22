@@ -330,9 +330,10 @@ igualdad:
     cmp rbx,rax
     jne noigualdad;misma cdad de elementos
     cmp rcx,rax
-    jne noigualdad;cdad de elementos igual a las coincidencias
-    ;V 1.2 PODRIA SER JL
-    ;V 1.2 PUEDE NO FUNCIONAR CON ELEMENTOS REPETIDOS
+    jnge noigualdad;
+    ;deberia ser jne, pero por como InstanciasDeIgualdadFull primero compara elementos y despues checkea tamaño
+    ;dos cadenas vacias tienen 1 coincidencia, asi que se hace este arreglo
+    ;no afecta nada mas, ya que es la unica forma que 2 cadenas tengan mas coincidencias que elementos
     mov rcx,textIgualdad 
     mov rdx,[numeroArray1]
     mov r8,[numeroArray2]
