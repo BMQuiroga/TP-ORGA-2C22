@@ -2,7 +2,7 @@ global  main
 extern	puts
 extern  gets
 extern	printf
-
+;V4.1.2 23/11/2022 Bruno Quroga 107788 
 section     .data
     textLineJump    db  "",10,0
     cadenaValida    db  " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";37
