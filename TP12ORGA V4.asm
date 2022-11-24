@@ -5,7 +5,7 @@ extern	printf
 ;V4.1.2 23/11/2022 Bruno Quroga 107788 
 section     .data
     textLineJump    db  "",10,0
-    cadenaValida    db  " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";37
+    cadenaValida    db  " ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567899";37
     textMainMenu    db  "-----Menu principal-----",10,"0- Ingresar la cadena 0",10,"1- Ingresar la cadena 1",10,"2- Ingresar la cadena 2",10,"3- Ingresar la cadena 3",10,"4- Ingresar la cadena 4",10,"5- Ingresar la cadena 5",10,"6- Evaluar la existencia de un elemento",10,"7- Evaluar relaciones de Igualdad e Inclusion entre cadenas",10,"8- Union de cadenas",10,"9- Salir",10,0
     textContinue    db  "Desea continuar? (S/N): ",0
     textErrorB      db  "Elemento Invalido, vuelva a ingresar",10,0
